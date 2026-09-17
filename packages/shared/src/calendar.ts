@@ -5,6 +5,9 @@ import {
   GRANT_STATUSES, INDUSTRIES,
 } from './enums';
 import { INTERESTS } from './procurement';
+import {
+  EXPORT_STATUSES, FOUNDER_TRAITS, NO_FOUNDER_TRAIT,
+} from './target-traits';
 import type { EligibilityLevel, GrantStatus } from './enums';
 
 /* ────────────── 기업 프로필 ────────────── */
@@ -40,6 +43,18 @@ export const CompanyProfileSchema = z.object({
   /** 대표자 출생연도 — 청년 대상 공고 판정에 쓴다 */
   founderBirthYear: z.number().int().nullable(),
   certifications: z.array(z.string()).default([]), // 벤처확인·이노비즈 등
+
+  /* ── 대상 특성 — 여성·재창업·소상공인 전용 공고 판정 ── */
+
+  /** 대표자 특성. 빈 배열은 "안 골랐다", `['none']` 은 "해당 없음" */
+  founderTraits: z.array(z.enum([...FOUNDER_TRAITS, NO_FOUNDER_TRAIT] as const)).default([]),
+  /** 소상공인 해당 여부. null 이면 안 답했다 */
+  isSmallBusiness: z.boolean().nullable().default(null),
+  exportStatus: z.enum(EXPORT_STATUSES).nullable().default(null),
+  /** 특허·실용신안·디자인권 보유 여부 */
+  hasIp: z.boolean().nullable().default(null),
+  /** 선정된 적 있는 정부 사업. 빈 배열은 "안 골랐다", `['none']` 은 "없음" */
+  pastPrograms: z.array(z.string()).default([]),
 
   /* ── 무엇을 찾고 있는지 ── */
 

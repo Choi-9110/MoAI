@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
-  businessYearsOf, cityKey, conditionKey, estimateAgeRange, formatAgeRange,
+  FOUNDER_TRAIT_LABELS, NO_PAST_PROGRAM,
+  SOCIAL_ECONOMY_CERTIFICATIONS, businessYearsOf, cityKey, conditionKey,
+  detectTargetRequirements, estimateAgeRange, formatAgeRange, programsIn,
 } from '@moai/shared';
 import type {
-  ApplicantType, Eligibility, EligibilityReason, OpenCondition,
+  ApplicantType, ConditionAnswer, Eligibility, EligibilityReason, FounderTrait,
+  OpenCondition, TargetRequirement,
 } from '@moai/shared';
 import { CompanyProfile } from '../company-profiles/entities/company-profile.entity';
 import { Grant } from './entities/grant.entity';
@@ -210,6 +213,7 @@ export class EligibilityService {
       ...this.checkRevenue(grant, profile),
       ...this.checkCorporation(grant, profile),
       ...this.checkCertifications(grant, profile),
+      ...this.checkTargetTraits(grant, profile),
       // 아래 둘은 마지막에 본다. 다른 요건을 다 통과해도 여기서 뒤집힐 수 있다.
       ...this.checkTargetDetail(grant, profile, open),
       ...this.checkExclusion(grant, profile, open),
@@ -644,7 +648,7 @@ export class EligibilityService {
 
     for (const clause of clauses) {
       const key = conditionKey(clause);
-      const answer = answers[key];
+      const answer = this.programAnswer(clause, p) ?? answers[key];
       // 신청 대상은 "해당한다"가 통과다. 제외 대상과 방향이 반대다.
       if (answer === 'no') {
         return [{
@@ -758,7 +762,7 @@ export class EligibilityService {
 
     for (const clause of specific) {
       const key = conditionKey(clause);
-      const answer = answers[key];
+      const answer = this.programAnswer(clause, p) ?? answers[key];
       if (answer === 'yes') hit.push(clause);
       else if (answer !== 'no') {
         pending.push(clause);
@@ -788,6 +792,118 @@ export class EligibilityService {
       verdict: 'unknown',
       message: `확인이 필요한 조건 ${pending.length}건 — ${this.shorten(pending.join(' / '))}`,
     }];
+  }
+
+  /**
+   * 대상 특성 — 여성·재창업·소상공인·사회적경제·수출·지식재산 전용 공고.
+   *
+   * 공고 쪽은 `detectTargetRequirements` 가 제목·신청대상에서 찾는다.
+   * 사용자 쪽은 내 정보에서 **직접 받은 값만** 쓴다. 종업원 수로 소상공인을
+   * 추정할 수는 있지만 매출 기준이 빠져 있어 판정에는 쓰지 않는다.
+   *
+   * 탈락은 두 가지가 다 맞을 때만이다 — 사용자가 답했고, 공고 제목에
+   * 대상이 박혀 있다(`certain`). 신청대상 문장에서만 찾은 것은 나열의
+   * 한 갈래일 수 있어 확인 필요로 둔다.
+   */
+  private checkTargetTraits(g: Grant, p: CompanyProfile): EligibilityReason[] {
+    return detectTargetRequirements(g).map(({ requirement, certain, evidence }) => {
+      const { label, has, answered, ask } = this.traitOf(requirement, p);
+      const field = `대상 (${label})`;
+
+      if (has) {
+        return { field, verdict: 'pass', message: `${label} 대상 — 해당합니다.` };
+      }
+      if (!answered) {
+        return {
+          field,
+          verdict: 'unknown',
+          message: `${label} 대상으로 보입니다 — 내 정보에 ${ask}을(를) 입력하면 판정해 드립니다.`,
+        };
+      }
+      if (certain) {
+        return { field, verdict: 'fail', message: `${label} 대상 사업입니다 — 해당하지 않습니다.` };
+      }
+      return {
+        field,
+        verdict: 'unknown',
+        message: `${label} 대상일 수 있습니다 — 공고 원문을 확인해 주세요. "${evidence}"`,
+      };
+    });
+  }
+
+  /** 요건 하나에 대해 사용자가 해당하는지, 답은 했는지 */
+  private traitOf(
+    r: TargetRequirement,
+    p: CompanyProfile,
+  ): { label: string; has: boolean; answered: boolean; ask: string } {
+    // 예비창업자는 사업체가 없으니 소상공인·수출기업일 수 없다. 답을 기다리지 않는다.
+    const preliminary = p.stage === 'preliminary';
+
+    switch (r.kind) {
+      case 'trait': {
+        const traits = p.founderTraits ?? [];
+        return {
+          label: FOUNDER_TRAIT_LABELS[r.trait],
+          has: traits.includes(r.trait as FounderTrait),
+          answered: traits.length > 0, // ['none'] 도 답한 것이다
+          ask: '대표자 특성',
+        };
+      }
+      case 'smallBusiness':
+        return {
+          label: '소상공인',
+          has: p.isSmallBusiness === true,
+          answered: preliminary || p.isSmallBusiness != null,
+          ask: '소상공인 여부',
+        };
+      case 'socialEconomy': {
+        const certs = p.certifications ?? [];
+        return {
+          label: '사회적경제기업',
+          has: certs.some((c) =>
+            (SOCIAL_ECONOMY_CERTIFICATIONS as readonly string[]).includes(c),
+          ),
+          answered: certs.length > 0, // ['해당 없음'] 도 답한 것이다
+          ask: '보유 인증',
+        };
+      }
+      case 'exporting':
+        return {
+          label: '수출기업',
+          has: p.exportStatus === 'exporting',
+          answered: preliminary || p.exportStatus != null,
+          ask: '수출 현황',
+        };
+      case 'ip':
+        return {
+          label: '지식재산 보유',
+          has: p.hasIp === true,
+          answered: p.hasIp != null,
+          ask: '지식재산 보유 여부',
+        };
+    }
+  }
+
+  /**
+   * 사업 이력으로 조건 문장에 답한다.
+   *
+   * "'23년~'26년 초기창업패키지 선정기업", "예비창업패키지 기수혜자 제외"
+   * 같은 문장은 내 정보의 선정 이력으로 답할 수 있다. 답은 "그 문장이 나에게
+   * 해당하는가"이므로 신청 대상·제외 대상 모두 같은 뜻으로 쓴다.
+   *
+   * 이력을 아직 안 골랐거나 문장에 아는 사업 이름이 없으면 `null` —
+   * 사용자가 직접 답한 것을 본다.
+   */
+  private programAnswer(clause: string, p: CompanyProfile): ConditionAnswer | null {
+    const history = p.pastPrograms ?? [];
+    if (history.length === 0) return null;
+    if (!/선정|졸업|수혜|협약|참여|지원\s*받/.test(clause)) return null;
+
+    const named = programsIn(clause);
+    if (named.length === 0) return null;
+
+    const mine = history.filter((h) => h !== NO_PAST_PROGRAM);
+    return named.some((n) => mine.includes(n)) ? 'yes' : 'no';
   }
 
   /* ────────────── 유틸 ────────────── */

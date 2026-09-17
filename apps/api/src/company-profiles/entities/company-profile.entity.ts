@@ -1,5 +1,7 @@
 import { Column, Entity, Index } from 'typeorm';
-import type { ApplicantType, ConditionAnswer, Industry } from '@moai/shared';
+import type {
+  ApplicantType, ConditionAnswer, ExportStatus, Industry,
+} from '@moai/shared';
 import { BaseEntity } from '../../common/base.entity';
 
 /**
@@ -76,6 +78,39 @@ export class CompanyProfile extends BaseEntity {
   /** 보유 인증 (벤처기업, 이노비즈, 여성기업 …) */
   @Column({ type: 'jsonb', default: () => "'[]'::jsonb" })
   certifications!: string[];
+
+  /**
+   * 대표자 특성 (여성 · 재창업 · 대학(원)생 · 경력단절 · 외국인).
+   *
+   * 여성기업·재창업 전용 공고를 거르려면 사람에 대한 정보가 필요하다.
+   * 빈 배열은 "안 골랐다", `['none']` 은 "해당 없음"이다.
+   */
+  @Column({ type: 'jsonb', name: 'founder_traits', default: () => "'[]'::jsonb" })
+  founderTraits!: string[];
+
+  /**
+   * 소상공인 해당 여부.
+   * 소상공인 전용 공고가 접수 중 공고의 13% 라 따로 묻는다.
+   */
+  @Column({ type: 'boolean', name: 'is_small_business', nullable: true })
+  isSmallBusiness!: boolean | null;
+
+  /** 수출 현황 — `exporting` · `preparing` · `none` */
+  @Column({ type: 'varchar', length: 20, name: 'export_status', nullable: true })
+  exportStatus!: ExportStatus | null;
+
+  /** 특허·실용신안·디자인권 보유 여부 */
+  @Column({ type: 'boolean', name: 'has_ip', nullable: true })
+  hasIp!: boolean | null;
+
+  /**
+   * 선정된 적 있는 정부 사업 (`PAST_PROGRAMS`).
+   *
+   * "초기창업패키지 선정기업 대상", "동일 사업 기수혜자 제외" 판정에 쓴다.
+   * 관심 공고를 "선정"으로 표시하면 제목에서 찾아 자동으로 채운다.
+   */
+  @Column({ type: 'jsonb', name: 'past_programs', default: () => "'[]'::jsonb" })
+  pastPrograms!: string[];
 
   /**
    * 무엇을 찾고 있는지 — `grant`(지원사업) · `rnd`(R&D) · `bid`(나라장터 입찰).

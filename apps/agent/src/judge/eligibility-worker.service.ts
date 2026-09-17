@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import type { SoftCheckStatus } from '@moai/shared';
+import type { JudgeInput, SoftCheckStatus } from '@moai/shared';
 import { JudgeRegistry } from './judge.registry';
 
 interface PendingItem {
@@ -14,16 +14,7 @@ interface PendingItem {
     applyTargetDetail?: string | null;
     excludeTarget?: string | null;
   };
-  profile: {
-    id: string;
-    name: string;
-    stage: string | null;
-    industry: string | null;
-    region: string | null;
-    foundedAt: string | null;
-    employees: number | null;
-    certifications: string[];
-  };
+  profile: JudgeInput['profile'] & { id: string };
   hardReasons: { field: string; verdict: string; message: string }[];
 }
 
