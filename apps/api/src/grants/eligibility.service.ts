@@ -25,7 +25,22 @@ const STANDARD_EXCLUSIONS: RegExp[] = [
   /신청요건에 적합하지|사업목적에 부합하지|서류.*미비|허위/,
   /기타.*(제한|사유)|그 ?외.*사유/,
   /범죄|형사처벌|성실의무|의무.*불이행/,
-  /보조금.*환수|지원금.*환수|제재부가금/,
+  /보조금.*환수|지원금.*환수|제재부가금|환수금/,
+  /*
+   * 아래는 운영 공고의 "확인 필요" 질문 237개를 세어 보고 더한 것이다.
+   * 정상적으로 신청하는 사람이라면 해당하지 않는 것들이라, 물으면 소음이다.
+   */
+  /참여\s*제한|제재\s*조치|수행\s*(대상에서\s*)?배제|참여\s*제한\s*중/,
+  /체불\s*사업주|임금\s*체불/,
+  /주권\s*상장|상호\s*출자\s*제한|대기업|대규모\s*기업\s*집단/,
+  /(지식\s*재산권|특허|실용\s*신안).{0,20}(침해|도용)|모방|도용|표절/,
+  /부적합(하다고|한)?\s*(인정|판단)|부적격|기준\s*미달/,
+  /사행|유흥|주점|도박|향락|무도장|미풍\s*양속|반사회/,
+  /신용\s*(도\s*)?불량|금융\s*신용도/,
+  /동일(한)?\s*(내용|과제|아이템|사업)(으로|의)?.{0,30}(지원|수혜|선정)/,
+  /불량\s*거래|자본\s*잠식|기소\s*중지|법적\s*제재|정당한\s*사유/,
+  /부합(하지|되지)\s*않|부적당|요건에\s*해당하지\s*않는|사실과\s*다르|대리\s*신청/,
+  /^[^가-힣]*기타\s*.{0,25}(인정|판단)하는\s*(경우|자|기업)/,
 ];
 
 /**
@@ -104,14 +119,49 @@ const NOT_A_CONDITION: RegExp[] = [
   /^[)\]}]/,
   // 안내 제목
   /^(이런 분께|모집 개요|사업 개요|추천 대상)/,
+  /*
+   * 머리말·가리킴 — 조건은 그 아래나 다른 곳에 있다.
+   * "아래 항목 중 1개 이상에 해당되는 경우 신청 불가", "공고문 참조",
+   * "【입주제한 대상자】", "지원제한", "중복참여 제한"
+   */
+  /^[^가-힣A-Za-z]*$/, // 글자 없이 번호·기호뿐인 줄
+  /^(?:[ㅁㅇo•￭⁃✓?\-]\s*)?(아래|다음|하기|상기)(의)?\s*.{0,25}(해당|경우|기업|자|요건)/,
+  /^[【\[<(]?[^\s]{0,12}(대상자?|제한|불가|제외|요건)[】\]>)]?\s*[:：]?$/,
+  /^(ㅁ|ㅇ|o|-|⁃|✓|\?)?\s*(지원\s*)?(불가|제한|제외)\s*(대상|업종|요건)?\s*[:：]?$/,
+  /^(중복\s*참여|중복\s*지원)\s*(제한|불가)$/,
+  // 괄호로 감싼 제목 한 줄 — "【입주제한 대상자】"
+  /^[【\[<]\s*[^】\]>]{1,20}[】\]>]\s*[:：]?$/,
+  // 절차·서류 안내 — 답할 수 있는 조건이 아니다
+  /→|-&gt;|&gt;|https?:\/\/|www\./,
+  /^(서류\s*제출|최종\s*선정|입주\s*기간)|협약\s*은행/,
+  /^.{0,15}담당자.{0,5}문의[^가-힣]*$/,
+  /(확인서|증명서|납부\s*확인서|등본)\s*\(/,
+  /*
+   * 누구나 받는 줄은 조건이 아니다.
+   * "(졸업, 재학 누구나)" 처럼 **특정 집단 안에서의 누구나**는 조건이므로
+   * "관심 있는 누구나", "누구나 참여 가능" 꼴만 본다.
+   */
+  /관심\s*(이\s*)?있는\s*누구나|누구나\s*(참여|신청|지원)\s*(가능|할\s*수)|^[^가-힣]*제한\s*없음[^가-힣]*$/,
 ];
+
+/**
+ * "공고문 참조" 같은 가리킴.
+ *
+ * 조건이 아니라서 묻지는 않는다. 다만 **조건이 공고문에 따로 있다는 뜻**이라
+ * "일반 결격 사유만 있습니다" 라고 말하면 거짓이 된다. 안내 문구를 바꾸는 데 쓴다.
+ */
+const POINTER =
+  /^.{0,20}(공고문|모집\s*공고|포스터|홈페이지|하단|첨부).{0,15}(참조|참고|확인)[^가-힣]*$/;
 
 export function isNotACondition(clause: string): boolean {
   // 글머리 기호("◦ 모집 인원: …")가 붙은 줄도 같은 안내문이다.
   // 원문과 기호를 뗀 형태를 모두 본다.
   const raw = clause.trim();
   const normalized = conditionKey(clause);
-  return NOT_A_CONDITION.some((re) => re.test(raw) || re.test(normalized));
+  return (
+    POINTER.test(normalized) ||
+    NOT_A_CONDITION.some((re) => re.test(raw) || re.test(normalized))
+  );
 }
 
 export function isCoveredByStructure(clause: string): boolean {
@@ -657,7 +707,7 @@ export class EligibilityService {
 
     for (const clause of clauses) {
       const key = conditionKey(clause);
-      const answer = this.programAnswer(clause, p) ?? answers[key];
+      const answer = this.autoAnswer(clause, p, 'target') ?? answers[key];
       // 신청 대상은 "해당한다"가 통과다. 제외 대상과 방향이 반대다.
       if (answer === 'no') {
         return [{
@@ -754,10 +804,13 @@ export class EligibilityService {
     );
 
     if (specific.length === 0) {
+      const pointed = splitClauses(raw).some((c) => POINTER.test(conditionKey(c)));
       return [{
         field: '제외 대상',
         verdict: 'pass',
-        message: '세금 체납·휴폐업 등 일반 결격 사유만 있습니다.',
+        message: pointed
+          ? '세부 제외 조건은 공고문에 따로 있습니다 — 신청 전에 원문을 확인해 주세요.'
+          : '세금 체납·휴폐업 등 일반 결격 사유만 있습니다.',
       }];
     }
 
@@ -772,7 +825,7 @@ export class EligibilityService {
 
     for (const clause of specific) {
       const key = conditionKey(clause);
-      const answer = this.programAnswer(clause, p) ?? answers[key];
+      const answer = this.autoAnswer(clause, p, 'exclusion') ?? answers[key];
       if (answer === 'yes') hit.push(clause);
       else if (answer !== 'no') {
         pending.push(clause);
@@ -906,6 +959,118 @@ export class EligibilityService {
           profileField: 'hasIp',
         };
     }
+  }
+
+  /**
+   * 내 정보로 답할 수 있는 조건 문장이면 답한다. 못 하면 `null`.
+   *
+   * 조건 문장은 공고마다 표현이 달라 문장을 키로 한 답변 재사용은 거의
+   * 안 먹힌다(운영 공고에서 질문 237개 중 202개가 한 번만 나왔다). 대신
+   * **문장이 묻는 사실**이 내 정보에 이미 있으면 그걸로 답한다.
+   */
+  private autoAnswer(
+    clause: string,
+    p: CompanyProfile,
+    kind: OpenCondition['kind'],
+  ): ConditionAnswer | null {
+    const history = this.programAnswer(clause, p);
+    if (history) return history;
+
+    /*
+     * 아래는 **제외 대상에서만** 쓴다. 신청 대상 칸의 "예비창업자: 사업자를
+     * 등록하지 않은 자" 는 여러 갈래 중 하나라, 법인에게 "해당 안 함"으로
+     * 답하면 멀쩡한 공고가 탈락한다.
+     */
+    if (kind !== 'exclusion') return null;
+    return (
+      this.stageAnswer(clause, p) ??
+      this.yearsAnswer(clause, p) ??
+      this.industryAnswer(clause, p) ??
+      this.ipAnswer(clause, p)
+    );
+  }
+
+  /**
+   * 업력으로 답하는 제외 조건.
+   *   "업력이 7년이 초과하는 기업", "창업 7년 초과 기업", "업력 1년 미만 창업기업",
+   *   "업력 1년미만 및 업력 7년이상 소상공인 제외"
+   */
+  private yearsAnswer(clause: string, p: CompanyProfile): ConditionAnswer | null {
+    const flat = clause.replace(/\s+/g, ' ');
+    const rules = [...flat.matchAll(/(?:업력|창업)\s*(?:이\s*)?(\d+)\s*년\s*(?:이\s*)?(초과|이상|미만)/g)];
+    if (rules.length === 0) return null;
+    if (p.stage === 'preliminary') return null; // 예비창업자 업력은 별도 조건으로 다룬다
+    if (!p.foundedAt) return null;
+
+    const years = this.yearsSince(new Date(p.foundedAt));
+    const hit = rules.some(([, n, op]) =>
+      op === '미만' ? years < Number(n) : op === '이상' ? years >= Number(n) : years > Number(n),
+    );
+    return hit ? 'yes' : 'no';
+  }
+
+  /**
+   * 업종으로 답하는 제외 조건 — 창업지원법 제외 업종, 입주 불가 업종, 공해 유발 업종.
+   *
+   * **해당 없음만 답한다.** 업종 선택지가 굵어서(`service` 안에 숙박도 미용도
+   * 있다) "해당함"은 단정할 수 없다. 확실히 거리가 먼 업종일 때만 넘긴다.
+   */
+  private industryAnswer(clause: string, p: CompanyProfile): ConditionAnswer | null {
+    if (!p.industry) return null;
+
+    const excludedTrade =
+      /창업에서\s*제외되는\s*업종|시행령\s*제\s*4\s*조|제외\s*(대상\s*)?업종|(입주|입점)\s*(불가|제한|제외)\s*(대상\s*)?업종|제한\s*업종|숙박|음식점|요식|금융\s*및\s*보험|부동산|도\s*소매|도매\s*및\s*소매|미용/;
+    if (excludedTrade.test(clause) && ['it', 'bio', 'content', 'manufacturing'].includes(p.industry)) {
+      return 'no';
+    }
+
+    const pollution = /공해|소음|진동|폐수|악취|분진|오염|도금|도장|주물|혐오/;
+    if (pollution.test(clause) && ['it', 'content', 'service', 'commerce'].includes(p.industry)) {
+      return 'no';
+    }
+    return null;
+  }
+
+  /** "특허를 보유하지 않은 기업" 제외 */
+  private ipAnswer(clause: string, p: CompanyProfile): ConditionAnswer | null {
+    if (p.hasIp == null) return null;
+    if (!/(특허|지식\s*재산).{0,20}(보유하지\s*않|없는|미보유)/.test(clause)) return null;
+    return p.hasIp ? 'no' : 'yes';
+  }
+
+  /**
+   * 사업자 형태·업력으로 답하는 조건.
+   *
+   *   "신청일 기준 회사 설립이 완료되지 않은 기업 (예비창업자)" → 예비창업자면 해당
+   *   "예비 창업자 제외"                                        → 예비창업자면 해당
+   *   "사업자등록을 한 창업기업"                                → 사업자가 있으면 해당
+   *   "신청일 기준 법인 설립 1년 미만인 기업"                   → 법인·개업일로 계산
+   */
+  private stageAnswer(clause: string, p: CompanyProfile): ConditionAnswer | null {
+    if (!p.stage) return null;
+    const pre = p.stage === 'preliminary';
+    const flat = clause.replace(/\s+/g, ' ').trim();
+
+    if (
+      /예비\s*창업/.test(flat) &&
+      (/제외|불가|설립이?\s*완료되지\s*않은|사업자\s*(등록\s*)?(전|없는|미등록)|영업하지\s*않는/.test(flat) ||
+        /^[^가-힣]*예비\s*창업자?[^가-힣]*$/.test(flat))
+    ) {
+      return pre ? 'yes' : 'no';
+    }
+
+    if (/^[^가-힣]*(사업자\s*등록을?\s*(한|마친)\s*)?(창업\s*기업|기\s*창업자)[^가-힣]*$/.test(flat)) {
+      return pre ? 'no' : 'yes';
+    }
+
+    const corpYears = flat.match(/법인\s*설립\s*(\d+)\s*년\s*미만/);
+    if (corpYears) {
+      if (p.stage !== 'corporate') return 'no';
+      if (!p.foundedAt) return null;
+      return this.yearsSince(new Date(p.foundedAt)) < Number(corpYears[1]) ? 'yes' : 'no';
+    }
+
+    return null;
   }
 
   /**

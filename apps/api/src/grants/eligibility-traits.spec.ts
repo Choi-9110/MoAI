@@ -197,3 +197,63 @@ describe('EligibilityService — 막고 있는 내 정보 칸 표시', () => {
     expect(reason(g, profile(), '신청 대상 조건')?.profileField).toBe('pastPrograms');
   });
 });
+
+describe('EligibilityService — 조건 문장 거르기와 자동 답변', () => {
+  it('머리말·가리킴·절차 안내는 묻지 않는다', () => {
+    const g = grant({
+      excludeTarget: [
+        '아래 항목 중 1개 이상에 해당되는 경우 신청 불가',
+        '【입주제한 대상자】',
+        '중복참여 제한',
+        '「공정거래법」에 따라 상호출자제한기업집단(대기업)으로 지정된 사업자',
+        '▶ 고용노동부가 공개하는 임금 체불사업주 명단에 포함된 자(기업)',
+      ].join('\n'),
+    });
+    expect(svc.evaluate(g, profile()).openConditions).toHaveLength(0);
+  });
+
+  it('공고문 참조만 있으면 통과시키되 원문을 보라고 말한다', () => {
+    const r = reason(grant({ excludeTarget: '공고문 참조' }), profile(), '제외 대상');
+    expect(r?.verdict).toBe('pass');
+    expect(r?.message).toContain('공고문');
+  });
+
+  it('특정 집단 안의 "누구나"는 조건으로 남긴다', () => {
+    const g = grant({
+      applyTargetDetail: '한동대학교 출신(학사,석사,박사, 졸업, 재학 누구나) 창업자(예비/초기/폐업 포함)',
+    });
+    expect(svc.evaluate(g, profile()).openConditions).toHaveLength(1);
+  });
+
+  it('예비창업자 제외 — 형태로 답한다', () => {
+    const g = grant({ excludeTarget: '예비창업자 및 PoC 단계의 사업자 신청 불가' });
+    expect(reason(g, profile({ stage: 'preliminary' }), '제외 대상')?.verdict).toBe('fail');
+    expect(reason(g, profile({ stage: 'individual' }), '제외 대상')?.verdict).toBe('pass');
+  });
+
+  it('신청 대상 칸의 예비창업자 갈래로는 사업자를 탈락시키지 않는다', () => {
+    const g = grant({
+      applyTargetDetail: '예비창업자: 공고일 기준 사업자를 등록하지 않은 자로서, 선정 후 3개월 내 사업자 등록이 가능한 자',
+    });
+    expect(svc.evaluate(g, profile({ stage: 'individual' })).level).not.toBe('ineligible');
+  });
+
+  it('업력 제외 — 개업일로 계산한다', () => {
+    const g = grant({ excludeTarget: '업력 1년 미만 창업기업' });
+    const recent = new Date(Date.now() - 100 * 86_400_000).toISOString().slice(0, 10);
+    expect(reason(g, profile({ foundedAt: recent }), '제외 대상')?.verdict).toBe('fail');
+    expect(reason(g, profile({ foundedAt: '2020-01-01' }), '제외 대상')?.verdict).toBe('pass');
+  });
+
+  it('제외 업종 — 거리가 먼 업종만 해당 없음으로 답한다', () => {
+    const g = grant({ excludeTarget: '숙박 및 음식점업, 부동산업 및 임대업, 도매 및 소매업 등 창업보육이 필요하지 않은 업종' });
+    expect(reason(g, profile({ industry: 'it' }), '제외 대상')?.verdict).toBe('pass');
+    expect(reason(g, profile({ industry: 'food' }), '제외 대상')?.verdict).toBe('unknown');
+  });
+
+  it('특허 미보유 기업 제외 — 지식재산 보유로 답한다', () => {
+    const g = grant({ excludeTarget: '• 국내 특허 등록 또는 출원 중인 특허를 보유하지 않은 기업' });
+    expect(reason(g, profile({ hasIp: false }), '제외 대상')?.verdict).toBe('fail');
+    expect(reason(g, profile({ hasIp: true }), '제외 대상')?.verdict).toBe('pass');
+  });
+});
