@@ -1,8 +1,8 @@
-import { SOFT_CHECK_STATUSES } from '@moai/shared';
-import type { SoftCheckStatus } from '@moai/shared';
+import { DOCUMENT_STATUSES, SOFT_CHECK_STATUSES } from '@moai/shared';
+import type { DocumentStatus, SoftCheckStatus } from '@moai/shared';
 import { Type } from 'class-transformer';
 import {
-  IsArray, IsIn, IsInt, IsOptional, IsString, IsUUID, Max, Min,
+  IsArray, IsIn, IsInt, IsObject, IsOptional, IsString, IsUUID, Max, Min,
   ValidateNested,
 } from 'class-validator';
 
@@ -59,4 +59,36 @@ export class SoftResultDto {
   @IsOptional()
   @IsString()
   model?: string;
+}
+
+/** 공고문 읽기 결과 — 조건 자체는 서버에서 zod 로 다시 검사한다 */
+export class DocumentResultDto {
+  @IsString()
+  sourceUrl!: string;
+
+  @IsString()
+  fileName!: string;
+
+  @IsIn(DOCUMENT_STATUSES as unknown as string[])
+  status!: DocumentStatus;
+
+  @IsOptional()
+  @IsString()
+  text?: string | null;
+
+  @IsOptional()
+  @IsObject()
+  conditions?: Record<string, unknown> | null;
+
+  @IsOptional()
+  @IsString()
+  model?: string | null;
+
+  @Type(() => Number)
+  @IsInt()
+  version!: number;
+
+  @IsOptional()
+  @IsString()
+  error?: string | null;
 }

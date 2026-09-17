@@ -10,8 +10,9 @@ import {
   CalendarQueryDto, ExplainQueryDto, RelatedQueryDto, UpcomingQueryDto,
 } from './dto/calendar-query.dto';
 import {
-  PendingQueryDto, SoftResultDto, SweepDto,
+  DocumentResultDto, PendingQueryDto, SoftResultDto, SweepDto,
 } from './dto/eligibility.dto';
+import { GrantDocumentsService } from './grant-documents.service';
 import { CreateGrantDto } from './dto/create-grant.dto';
 import { UpdateGrantDto } from './dto/update-grant.dto';
 import { Grant } from './entities/grant.entity';
@@ -24,6 +25,7 @@ export class GrantsController {
     private readonly service: GrantsService,
     private readonly calendar: CalendarService,
     private readonly cache: EligibilityCacheService,
+    private readonly documents: GrantDocumentsService,
   ) {}
 
   /* ────────────── 캘린더 ────────────── */
@@ -187,6 +189,36 @@ export class GrantsController {
       model: dto.model,
     });
     return { ok: true };
+  }
+
+  /* ────────────── 공고문 읽기 ────────────── */
+
+  /** 읽을 공고문 대기열 — 로컬 에이전트가 가져간다 */
+  @Internal()
+  @Get('documents/pending')
+  documentsPending(@Query() query: PendingQueryDto) {
+    return this.documents.pending(query.limit ?? 10);
+  }
+
+  /** 공고문 읽기 결과 수신 */
+  @Internal()
+  @Post('documents/:grantId/result')
+  @HttpCode(200)
+  documentResult(
+    @Param('grantId', ParseUUIDPipe) grantId: string,
+    @Body() dto: DocumentResultDto,
+  ) {
+    return this.documents.saveResult(grantId, {
+      ...dto,
+      conditions: dto.conditions as never,
+    });
+  }
+
+  /** 진행 현황 */
+  @Internal()
+  @Get('documents/stats')
+  documentStats() {
+    return this.documents.stats();
   }
 
   /** 테넌트 판정 요약 */

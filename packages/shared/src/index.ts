@@ -20,3 +20,4 @@ export * from './roadmap';
 export * from './policy-brief';
 export * from './regions';
 export * from './target-traits';
+export * from './grant-document';

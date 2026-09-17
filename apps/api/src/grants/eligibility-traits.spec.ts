@@ -257,3 +257,89 @@ describe('EligibilityService — 조건 문장 거르기와 자동 답변', () =
     expect(reason(g, profile({ hasIp: true }), '제외 대상')?.verdict).toBe('pass');
   });
 });
+
+describe('EligibilityService — 공고문에서 읽은 조건', () => {
+  const doc = (over: Record<string, unknown> = {}) =>
+    ({
+      multiTrack: false, applicantTypes: null, businessYears: null, age: null,
+      regions: [], districts: [], maxEmployees: null, maxRevenue: null,
+      requiredCertifications: [], exclusiveTargets: [], industries: [],
+      requirements: [], exclusions: [], preferences: [], quotes: [],
+      version: 1, model: 'test', sourceUrl: 'x', extractedAt: '',
+      ...over,
+    }) as Grant['documentConditions'];
+
+  it('"10인 미만"은 9인 이하로 판정한다', () => {
+    const g = grant({ documentConditions: doc({ maxEmployees: { value: 10, inclusive: false } }) });
+    expect(reason(g, profile({ employees: 9 }), '종업원')?.verdict).toBe('pass');
+    expect(reason(g, profile({ employees: 10 }), '종업원')?.verdict).toBe('fail');
+  });
+
+  it('"7년 미만"은 6년까지 통과', () => {
+    const g = grant({ documentConditions: doc({ businessYears: { min: null, max: 7, exclusiveMax: true } }) });
+    expect(svc.evaluate(g, profile({ foundedAt: '2016-01-01' })).level).toBe('ineligible');
+  });
+
+  it('공공 API 가 준 값이 있으면 공고문 값으로 덮지 않는다', () => {
+    const g = grant({ maxEmployees: 50, documentConditions: doc({ maxEmployees: { value: 5, inclusive: true } }) });
+    expect(reason(g, profile({ employees: 30 }), '종업원')?.verdict).toBe('pass');
+  });
+
+  it('트랙형 공고는 지역만 합치고 나머지 구조화 값은 쓰지 않는다', () => {
+    const g = grant({
+      documentConditions: doc({
+        multiTrack: true, regions: ['경기'],
+        maxRevenue: { value: 100, inclusive: true },
+        exclusiveTargets: ['smallBusiness'],
+        requirements: ['노동환경: 제조업 매출 200억 이하', '소방: 소기업'],
+      }),
+    });
+    const v = svc.evaluate(g, profile({ region: '서울', annualRevenue: '999999999', isSmallBusiness: false }));
+    expect(v.reasons.find((r) => r.field === '지역')?.verdict).toBe('fail');
+    expect(v.reasons.find((r) => r.field === '매출액')).toBeUndefined();
+    expect(v.reasons.find((r) => r.field.startsWith('대상'))).toBeUndefined();
+    // 트랙별 조건은 하나하나 묻지 않는다 — 하나만 맞아도 되기 때문
+    expect(v.openConditions).toHaveLength(0);
+    expect(v.reasons.find((r) => r.field === '신청 대상 조건')?.verdict).toBe('unknown');
+  });
+
+  it('공고문의 전용 대상은 확신으로 본다', () => {
+    const g = grant({ title: '창업지원사업', documentConditions: doc({ exclusiveTargets: ['female'] }) });
+    expect(reason(g, profile({ founderTraits: ['none'] }), '대상')?.verdict).toBe('fail');
+  });
+
+  it('공고문의 요건·제외 조건은 묻고, 내 정보로 답할 수 있는 것은 답한다', () => {
+    const g = grant({
+      documentConditions: doc({
+        requirements: ['입주 후 6개월 이내 본점을 센터로 이전 가능한 기업'],
+        exclusions: ['예비창업자', '「공정거래법」상 상호출자제한기업집단 소속 기업'],
+      }),
+    });
+    const v = svc.evaluate(g, profile({ stage: 'individual' }));
+    expect(v.openConditions.map((o) => o.clause)).toEqual([
+      '입주 후 6개월 이내 본점을 센터로 이전 가능한 기업',
+    ]);
+    expect(svc.evaluate(g, profile({ stage: 'preliminary' })).level).toBe('ineligible');
+  });
+});
+
+describe('parseDocumentOutput', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { parseDocumentOutput, cleanDocumentText } = require('@moai/shared') as typeof import('@moai/shared');
+
+  it('코드블록·앞뒤 설명이 붙어도 읽고, 모르는 열거값은 버린다', () => {
+    const out = parseDocumentOutput('다음과 같습니다\n```json\n{"multiTrack":false,"applicantTypes":[],"exclusiveTargets":["female","소기업"],"industries":["bio","pharma"],"maxEmployees":{"value":10,"inclusive":false},"requirements":["A"],"quotes":[{"field":"maxEmployees","text":"상시근로자 10인 미만"}]}\n```');
+    expect(out?.exclusiveTargets).toEqual(['female']);
+    expect(out?.industries).toEqual(['bio']);
+    expect(out?.applicantTypes).toBeNull(); // 빈 배열은 제한 없음
+    expect(out?.maxEmployees).toEqual({ value: 10, inclusive: false });
+  });
+
+  it('JSON 이 아니면 null — 추측으로 채우지 않는다', () => {
+    expect(parseDocumentOutput('공고문을 읽을 수 없습니다')).toBeNull();
+  });
+
+  it('굵은 글씨로 겹쳐 찍힌 글자를 하나로 줄인다', () => {
+    expect(cleanDocumentText('2026 소상공인소상공인소상공인소상공인 카드수수료')).toBe('2026 소상공인 카드수수료');
+  });
+});

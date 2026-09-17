@@ -1,6 +1,7 @@
 import { Column, Entity, Index } from 'typeorm';
 import type {
-  AgencyType, ApplicantType, GrantCategory, Industry, Recurrence,
+  AgencyType, ApplicantType, GrantCategory, GrantDocumentConditions, Industry,
+  Recurrence,
 } from '@moai/shared';
 import { BaseEntity } from '../../common/base.entity';
 
@@ -140,4 +141,14 @@ export class Grant extends BaseEntity {
 
   @Column({ type: 'boolean', name: 'is_active', default: true })
   isActive!: boolean;
+
+  /**
+   * 첨부 공고문에서 뽑은 신청 자격 (`GrantDocumentsService`).
+   *
+   * 위의 요건 컬럼과 **따로 둔다.** 수집기는 공고가 갱신되면 API 값으로
+   * 요건 컬럼을 통째로 덮는다 — 거기 섞어 두면 공고문에서 읽어 낸 값이
+   * 다음 수집 때 조용히 지워진다. 판정할 때 둘을 합친다.
+   */
+  @Column({ type: 'jsonb', name: 'document_conditions', nullable: true })
+  documentConditions!: GrantDocumentConditions | null;
 }

@@ -6,13 +6,17 @@ import { CalendarService } from './calendar.service';
 import { EligibilityCacheService } from './eligibility-cache.service';
 import { EligibilityService } from './eligibility.service';
 import { EligibilityCheck } from './entities/eligibility-check.entity';
+import { GrantDocument } from './entities/grant-document.entity';
+import { GrantDocumentsService } from './grant-documents.service';
 import { Grant } from './entities/grant.entity';
 import { GrantsController } from './grants.controller';
 import { GrantsService } from './grants.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Grant, CompanyProfile, EligibilityCheck, SavedGrant]),
+    TypeOrmModule.forFeature([
+      Grant, CompanyProfile, EligibilityCheck, SavedGrant, GrantDocument,
+    ]),
   ],
   controllers: [GrantsController],
   providers: [
@@ -20,6 +24,7 @@ import { GrantsService } from './grants.service';
     CalendarService,
     EligibilityService,
     EligibilityCacheService,
+    GrantDocumentsService,
   ],
   exports: [
     GrantsService,

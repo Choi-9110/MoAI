@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import {
-  FOUNDER_TRAIT_LABELS, NO_PAST_PROGRAM,
+  FOUNDER_TRAITS, FOUNDER_TRAIT_LABELS, NO_PAST_PROGRAM,
   SOCIAL_ECONOMY_CERTIFICATIONS, businessYearsOf, cityKey, conditionKey,
   detectTargetRequirements, estimateAgeRange, formatAgeRange, programsIn,
 } from '@moai/shared';
 import type {
-  ApplicantType, ConditionAnswer, Eligibility, EligibilityReason, FounderTrait,
-  OpenCondition, TargetRequirement,
+  ApplicantType, ConditionAnswer, DetectedRequirement, Eligibility,
+  EligibilityReason, FounderTrait, OpenCondition, TargetRequirement,
 } from '@moai/shared';
 import { CompanyProfile } from '../company-profiles/entities/company-profile.entity';
 import { Grant } from './entities/grant.entity';
@@ -37,6 +37,9 @@ const STANDARD_EXCLUSIONS: RegExp[] = [
   /부적합(하다고|한)?\s*(인정|판단)|부적격|기준\s*미달/,
   /사행|유흥|주점|도박|향락|무도장|미풍\s*양속|반사회/,
   /신용\s*(도\s*)?불량|금융\s*신용도/,
+  /중복\s*(지원|수혜|참여|선정)/,
+  /감사\s*의견|부채\s*비율|자본\s*(전액\s*)?잠식|상장\s*(사|기업|법인)|코스닥|코스피|중견\s*기업/,
+  /지급\s*요청일|우선\s*순위에서\s*배제|유효\s*기간이?\s*(만료|유지)/,
   /동일(한)?\s*(내용|과제|아이템|사업)(으로|의)?.{0,30}(지원|수혜|선정)/,
   /불량\s*거래|자본\s*잠식|기소\s*중지|법적\s*제재|정당한\s*사유/,
   /부합(하지|되지)\s*않|부적당|요건에\s*해당하지\s*않는|사실과\s*다르|대리\s*신청/,
@@ -216,6 +219,126 @@ export function findDistricts(
   return [...found];
 }
 
+const unique = (list: string[]): string[] => {
+  const seen = new Set<string>();
+  return list.filter((c) => {
+    const k = conditionKey(c);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    return true;
+  });
+};
+
+/** 내 정보의 "보유 인증"에서 고를 수 있는 인증 */
+const KNOWN_CERTIFICATION =
+  /벤처|이노비즈|메인비즈|여성\s*기업|장애인\s*기업|사회적\s*기업|협동조합|마을\s*기업|소셜\s*벤처|연구\s*개발\s*전담|기업\s*부설\s*연구소|ISO/i;
+
+/**
+ * 지역 검사가 이미 다룬 문장인지 — "본사가 부천시에 소재한 기업",
+ * "관외로 이전한 기업 제외". 공고에 지역 제한이 있으면 지역 검사가 판정하므로
+ * 같은 내용을 다시 묻지 않는다.
+ */
+function coveredByLocation(clause: string, g: Grant): boolean {
+  const hasRegion =
+    g.targetRegions.length > 0 || (g.documentConditions?.districts ?? []).length > 0;
+  return hasRegion && /소재|관내|관외|도내|역외|주소지|본점|이전/.test(clause);
+}
+
+/**
+ * 공고 컬럼에 **공고문에서 읽은 조건을 채워 넣은 사본**.
+ *
+ * 비어 있는 칸만 채운다. 수집처가 구조화해 준 값이 있으면 그걸 믿는다 —
+ * 공공 API 값은 기관이 직접 입력한 것이고, 공고문 추출은 모델이 읽은 것이다.
+ *
+ * 트랙마다 자격이 다른 공고(`multiTrack`)는 지역만 채운다. 모델에게 공통
+ * 조건만 적으라고 했지만, 틀리면 멀쩡한 트랙을 가진 사람이 탈락한다.
+ *
+ * "미만"은 칸의 뜻("이하")에 맞게 하나 줄여 넣는다 — "10인 미만"은 9인 이하다.
+ */
+export function withDocument(g: Grant): Grant {
+  const doc = g.documentConditions;
+  if (!doc) return g;
+
+  const out = Object.assign(Object.create(Object.getPrototypeOf(g)) as Grant, g);
+  if (out.targetRegions.length === 0 && doc.regions.length > 0) {
+    out.targetRegions = doc.regions;
+  }
+  if (doc.multiTrack) return out;
+
+  if ((out.applicantTypes ?? []).length === 0 && doc.applicantTypes?.length) {
+    out.applicantTypes = doc.applicantTypes;
+  }
+  if (out.minBusinessYears == null && out.maxBusinessYears == null && doc.businessYears) {
+    const { min, max, exclusiveMax } = doc.businessYears;
+    out.minBusinessYears = min;
+    out.maxBusinessYears = max == null ? null : exclusiveMax ? Math.ceil(max) - 1 : max;
+  }
+  if (out.minAge == null && out.maxAge == null && doc.age) {
+    out.minAge = doc.age.min;
+    out.maxAge = doc.age.max;
+  }
+  if (out.maxEmployees == null && doc.maxEmployees) {
+    const { value, inclusive } = doc.maxEmployees;
+    out.maxEmployees = inclusive ? value : value - 1;
+  }
+  if (out.maxRevenue == null && doc.maxRevenue) {
+    const { value, inclusive } = doc.maxRevenue;
+    out.maxRevenue = String(inclusive ? value : value - 1);
+  }
+  /*
+   * 인증은 **내 정보에서 고를 수 있는 것만** 요건 칸에 넣는다. "여행업 등록증"
+   * 같은 면허는 고를 방법이 없어, 넣으면 그 면허가 있는 업체도 탈락한다.
+   * 나머지는 확인 질문으로 돌린다.
+   */
+  const known = doc.requiredCertifications.filter((c) => KNOWN_CERTIFICATION.test(c));
+  const unknown = doc.requiredCertifications.filter((c) => !KNOWN_CERTIFICATION.test(c));
+  if (out.requiredCertifications.length === 0 && known.length > 0) {
+    out.requiredCertifications = known;
+  }
+  if (unknown.length > 0) {
+    out.documentConditions = {
+      ...doc,
+      requirements: [...doc.requirements, ...unknown.map((c) => `${c} 보유`)],
+    };
+  }
+  if (out.targetIndustries.length === 0 && doc.industries.length > 0) {
+    out.targetIndustries = doc.industries;
+  }
+  return out;
+}
+
+/**
+ * 전용 대상 — 제목·신청대상에서 찾은 것과 공고문에서 읽은 것을 합친다.
+ *
+ * 공고문에서 읽은 것은 모델이 "공고 전체가 그 대상에게만 열려 있다"고 한
+ * 것이라 확신으로 본다. 단, 트랙형 공고는 그 판단이 틀리기 쉬워 제외한다.
+ */
+function targetRequirementsOf(g: Grant): DetectedRequirement[] {
+  const found = detectTargetRequirements(g);
+  const doc = g.documentConditions;
+  if (!doc || doc.multiTrack) return found;
+
+  const has = (kind: string) =>
+    found.some((f) => (f.requirement.kind === 'trait' ? f.requirement.trait : f.requirement.kind) === kind);
+  const quote = doc.quotes.find((q) => q.field === 'exclusiveTargets')?.text;
+
+  for (const t of doc.exclusiveTargets) {
+    if (has(t)) {
+      // 문장에서만 찾아 확신이 없던 것을 공고문이 뒷받침하면 확신으로 올린다
+      for (const f of found) {
+        const k = f.requirement.kind === 'trait' ? f.requirement.trait : f.requirement.kind;
+        if (k === t) f.certain = true;
+      }
+      continue;
+    }
+    const requirement: TargetRequirement = (FOUNDER_TRAITS as readonly string[]).includes(t)
+      ? { kind: 'trait', trait: t as FounderTrait }
+      : { kind: t as Exclude<TargetRequirement['kind'], 'trait'> } as TargetRequirement;
+    found.push({ requirement, certain: true, evidence: quote ?? '공고문' });
+  }
+  return found;
+}
+
 const APPLICANT_LABELS: Record<ApplicantType, string> = {
   preliminary: '예비창업자',
   individual: '개인사업자',
@@ -232,7 +355,8 @@ const APPLICANT_LABELS: Record<ApplicantType, string> = {
  */
 @Injectable()
 export class EligibilityService {
-  evaluate(grant: Grant, profile: CompanyProfile | null): Eligibility {
+  evaluate(source: Grant, profile: CompanyProfile | null): Eligibility {
+    const grant = withDocument(source);
     if (!profile) {
       return {
         level: 'unknown',
@@ -422,12 +546,10 @@ export class EligibilityService {
      * 광역은 맞았다. 그런데 시·군까지 좁혀 놓은 공고인지 본다.
      * 공공 API 의 지역 필드는 광역까지만이라 여기서 한 번 더 봐야 한다.
      */
-    const districts = findDistricts(
-      g.targetRegions,
-      g.applyTargetDetail,
-      g.title,
-      g.summary,
-    );
+    const districts = unique([
+      ...findDistricts(g.targetRegions, g.applyTargetDetail, g.title, g.summary),
+      ...(g.documentConditions?.districts ?? []),
+    ]);
     if (districts.length > 0) {
       /*
        * **시·군까지 알면 여기서 정할 수 있다.**
@@ -690,15 +812,39 @@ export class EligibilityService {
     open: OpenCondition[],
   ): EligibilityReason[] {
     const raw = g.applyTargetDetail?.trim();
-    if (!raw || isEmptyClause(raw)) return [];
+    const doc = g.documentConditions;
 
-    const clauses = splitClauses(raw).filter(
+    /*
+     * 트랙마다 자격이 다른 공고는 트랙 조건을 하나하나 "해당하나요?"로 물으면
+     * 안 된다 — 하나만 맞아도 되는데 하나라도 "아니오"면 탈락시키게 된다.
+     * 확인 필요로만 남기고 원문을 보게 한다.
+     */
+    if (doc?.multiTrack && doc.requirements.length > 0) {
+      return [{
+        field: '신청 대상 조건',
+        verdict: 'unknown',
+        message: `트랙·분야별로 자격이 다른 공고입니다 — 해당하는 트랙이 있는지 공고문을 확인해 주세요. (${this.shorten(doc.requirements.join(' / '), 80)})`,
+      }];
+    }
+
+    const fromText = raw && !isEmptyClause(raw)
+      ? splitClauses(raw).filter(
+          (c) =>
+            !isEmptyClause(c) &&
+            !isNotACondition(c) &&
+            !isCoveredByStructure(c) &&
+            hasSpecificRequirement(c),
+        )
+      : [];
+    // 공고문에서 뽑은 것은 이미 "조건"으로 추려진 문장이라 이력 여부로 거르지 않는다
+    const fromDoc = (doc?.requirements ?? []).filter(
       (c) =>
         !isEmptyClause(c) &&
         !isNotACondition(c) &&
         !isCoveredByStructure(c) &&
-        hasSpecificRequirement(c),
+        !coveredByLocation(c, g),
     );
+    const clauses = unique([...fromText, ...fromDoc]);
     if (clauses.length === 0) return [];
 
     const answers = p.conditionAnswers ?? {};
@@ -757,13 +903,15 @@ export class EligibilityService {
     p: CompanyProfile,
     open: OpenCondition[],
   ): EligibilityReason[] {
-    const raw = g.excludeTarget?.trim();
+    const docExclusions = g.documentConditions?.exclusions ?? [];
+    const given = g.excludeTarget?.trim();
     // "없음", "해당없음" 같은 값은 조건이 아니라 빈칸 표시다.
-    if (!raw || isEmptyClause(raw)) return [];
+    const raw = given && !isEmptyClause(given) ? given : '';
+    if (!raw && docExclusions.length === 0) return [];
 
     // 사업자 형태가 그대로 적힌 경우는 확정 판정한다.
     // 긴 문장 속 단어는 부정문일 수 있어 단독 표기만 인정한다.
-    if (p.stage) {
+    if (p.stage && raw) {
       const label = APPLICANT_LABELS[p.stage];
       const tokens = raw
         .split(/[,·/\n]/)
@@ -798,7 +946,10 @@ export class EligibilityService {
     }
 
     // 표준 결격 사유를 빼고 남는 조건만 본다
-    const specific = splitClauses(raw).filter(
+    const specific = unique([
+      ...splitClauses(raw),
+      ...docExclusions.filter((c) => !coveredByLocation(c, g)),
+    ]).filter(
       (c) =>
         !isEmptyClause(c) && !isNotACondition(c) && !isStandardExclusion(c),
     );
@@ -870,7 +1021,7 @@ export class EligibilityService {
    * 한 갈래일 수 있어 확인 필요로 둔다.
    */
   private checkTargetTraits(g: Grant, p: CompanyProfile): EligibilityReason[] {
-    return detectTargetRequirements(g).map(({ requirement, certain, evidence }) => {
+    return targetRequirementsOf(g).map(({ requirement, certain, evidence }) => {
       const { label, has, answered, ask, profileField } = this.traitOf(requirement, p);
       const field = `대상 (${label})`;
 
@@ -976,6 +1127,10 @@ export class EligibilityService {
     const history = this.programAnswer(clause, p);
     if (history) return history;
 
+    // 숫자·날짜로 답하는 사실 — 신청 대상·제외 대상 모두 "그 문장이 나에게 해당하나"로 같다
+    const fact = this.sizeAnswer(clause, p) ?? this.foundedDateAnswer(clause, p);
+    if (fact) return fact;
+
     /*
      * 아래는 **제외 대상에서만** 쓴다. 신청 대상 칸의 "예비창업자: 사업자를
      * 등록하지 않은 자" 는 여러 갈래 중 하나라, 법인에게 "해당 안 함"으로
@@ -988,6 +1143,45 @@ export class EligibilityService {
       this.industryAnswer(clause, p) ??
       this.ipAnswer(clause, p)
     );
+  }
+
+  /**
+   * 규모로 답하는 조건 — "근로자 5인 이상 사업장", "상시근로자 10인 미만",
+   * "연 매출액 0원 초과", "매출이 없는 업체".
+   */
+  private sizeAnswer(clause: string, p: CompanyProfile): ConditionAnswer | null {
+    const flat = clause.replace(/\s+/g, ' ');
+
+    const emp = flat.match(/(?:근로자|종업원|직원|상시\s*인원|고용\s*인원)\s*(?:수\s*)?(?:가\s*)?(\d+)\s*(?:인|명)\s*(이상|이하|미만|초과)/);
+    if (emp) {
+      const n = p.employees ?? (p.stage === 'preliminary' ? 0 : null);
+      if (n == null) return null;
+      const v = Number(emp[1]);
+      const ok = { 이상: n >= v, 이하: n <= v, 미만: n < v, 초과: n > v }[emp[2] as '이상'];
+      return ok ? 'yes' : 'no';
+    }
+
+    if (/매출\s*(액)?\s*(이|가)?\s*(없는|0\s*원\s*초과|발생하지\s*않은)/.test(flat)) {
+      if (p.annualRevenue == null) return p.stage === 'preliminary' ? (/없는|않은/.test(flat) ? 'yes' : 'no') : null;
+      const has = Number(p.annualRevenue) > 0;
+      return /없는|않은/.test(flat) ? (has ? 'no' : 'yes') : (has ? 'yes' : 'no');
+    }
+    return null;
+  }
+
+  /** "개업일이 2025년 12월 31일 이전", "2024. 1. 1. 이후 창업한 기업" */
+  private foundedDateAnswer(clause: string, p: CompanyProfile): ConditionAnswer | null {
+    const flat = clause.replace(/\s+/g, ' ');
+    if (!/개업|창업|설립|사업자\s*등록/.test(flat)) return null;
+    const m = flat.match(/(20\d{2})\s*[.년-]\s*(\d{1,2})\s*[.월-]\s*(\d{1,2})\s*일?\.?\s*(이전|이후|전|후|까지|부터)/);
+    if (!m) return null;
+    if (p.stage === 'preliminary') return null;
+    if (!p.foundedAt) return null;
+
+    const pivot = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).getTime();
+    const founded = new Date(p.foundedAt).getTime();
+    const before = /이전|전|까지/.test(m[4]);
+    return (before ? founded <= pivot : founded >= pivot) ? 'yes' : 'no';
   }
 
   /**
