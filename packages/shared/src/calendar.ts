@@ -191,8 +191,50 @@ export const EligibilityReasonSchema = z.object({
   /** 통과 / 미충족 / 확인 불가 */
   verdict: z.enum(['pass', 'fail', 'unknown']),
   message: z.string(),
+  /**
+   * 확인 불가의 원인이 **비어 있는 내 정보 칸**일 때 그 칸 이름.
+   *
+   * 공고 쪽이 모호해서 모르는 것(경계 연령, 원문 확인 필요)에는 달지 않는다
+   * — 사용자가 채워도 풀리지 않는 것을 "이것만 답하면"으로 권하면 안 된다.
+   */
+  profileField: z.string().optional(),
 });
 export type EligibilityReason = z.infer<typeof EligibilityReasonSchema>;
+
+/**
+ * 내 정보 칸 이름 → 화면에 보일 이름.
+ * "이것만 답하면 N건 확정돼요" 에서 쓴다.
+ */
+export const PROFILE_FIELD_LABELS: Record<string, string> = {
+  stage: '사업자 형태',
+  foundedAt: '개업일',
+  region: '지역',
+  regionDetail: '시·군·구',
+  industry: '업종',
+  founderBirthYear: '대표자 출생연도',
+  employees: '종업원 수',
+  annualRevenue: '연 매출액',
+  founderTraits: '대표자 특성',
+  isSmallBusiness: '소상공인 여부',
+  certifications: '보유 인증',
+  exportStatus: '수출 현황',
+  hasIp: '지식재산 보유',
+  pastPrograms: '선정된 사업',
+};
+
+/**
+ * 비어 있는 칸 하나가 막고 있는 공고 수.
+ *
+ * `blocked` 는 그 칸 때문에 확인 필요인 공고 전부, `resolves` 는 그 칸만
+ * 채우면 **다른 확인 없이 판정이 끝나는** 공고다. 순위는 `resolves` 로 매긴다.
+ */
+export const UnlockHintSchema = z.object({
+  field: z.string(),
+  label: z.string(),
+  blocked: z.number().int(),
+  resolves: z.number().int(),
+});
+export type UnlockHint = z.infer<typeof UnlockHintSchema>;
 
 export const EligibilitySchema = z.object({
   level: z.enum(ELIGIBILITY_LEVELS),

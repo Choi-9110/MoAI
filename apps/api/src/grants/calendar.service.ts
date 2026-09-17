@@ -3,10 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   ArrayContains, Between, In, IsNull, MoreThan, Not, Repository,
 } from 'typeorm';
-import { GRANT_STAGE_YEARS, resolveGrantStatus } from '@moai/shared';
+import {
+  GRANT_STAGE_YEARS, PROFILE_FIELD_LABELS, resolveGrantStatus,
+} from '@moai/shared';
 import type {
   CalendarDay, CalendarItem, CalendarMonth, Eligibility, EligibilityLevel,
-  Grant as GrantDto, GrantCategory, GrantOutcome, GrantStage,
+  Grant as GrantDto, GrantCategory, GrantOutcome, GrantStage, UnlockHint,
 } from '@moai/shared';
 import { CompanyProfile } from '../company-profiles/entities/company-profile.entity';
 import { EligibilityService } from './eligibility.service';
@@ -507,6 +509,60 @@ export class CalendarService {
     else level = 'eligible';
 
     return { ...hard, level, passed, checked, reasons };
+  }
+
+  /**
+   * "이것만 답하면 N건 확정돼요."
+   *
+   * 접수 중인 공고를 전부 판정해 보고, 확인 필요로 남은 이유 중 **내 정보의
+   * 빈 칸** 때문인 것을 칸별로 센다. 사용자는 효과 큰 칸부터 하나씩 채우면
+   * 된다 — 무엇을 왜 입력해야 하는지 모르는 채로 긴 폼을 채우지 않게 한다.
+   *
+   * 공고 쪽이 모호해 모르는 것(원문 확인 필요, 연령 경계)은 세지 않는다.
+   * 채워도 안 풀리는 것을 권하면 신뢰만 잃는다.
+   */
+  async unlockHints(query: {
+    tenantId?: string;
+    profileId?: string;
+  }): Promise<UnlockHint[]> {
+    const profile = await this.resolveProfile(query);
+    if (!profile) return [];
+
+    const now = new Date();
+    const rows = await this.grants
+      .createQueryBuilder('g')
+      .where('g.is_active = true')
+      .andWhere('(g.apply_end_at IS NULL OR g.apply_end_at >= :now)', { now })
+      .getMany();
+
+    const blocked = new Map<string, number>();
+    const resolves = new Map<string, number>();
+
+    for (const row of rows) {
+      const verdict = this.eligibility.evaluate(row, profile);
+      if (verdict.level !== 'conditional' && verdict.level !== 'unknown') continue;
+
+      const unknowns = verdict.reasons.filter((r) => r.verdict === 'unknown');
+      const fields = new Set(
+        unknowns.map((r) => r.profileField).filter((f): f is string => !!f),
+      );
+      for (const f of fields) blocked.set(f, (blocked.get(f) ?? 0) + 1);
+
+      // 남은 확인이 모두 이 한 칸 때문일 때만 "이것만 채우면 끝"이다
+      if (fields.size === 1 && unknowns.every((r) => r.profileField)) {
+        const [only] = fields;
+        resolves.set(only, (resolves.get(only) ?? 0) + 1);
+      }
+    }
+
+    return [...blocked.entries()]
+      .map(([field, count]) => ({
+        field,
+        label: PROFILE_FIELD_LABELS[field] ?? field,
+        blocked: count,
+        resolves: resolves.get(field) ?? 0,
+      }))
+      .sort((a, b) => b.resolves - a.resolves || b.blocked - a.blocked);
   }
 
   /** profileId 가 있으면 그것을, 없으면 테넌트의 기본 프로필을 쓴다. */

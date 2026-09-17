@@ -6,7 +6,7 @@ import {
   ELIGIBILITY_LABELS, businessYearsOf, roadmapStepsFor,
 } from '@moai/shared';
 import type {
-  ApplicantType, CalendarItem, CalendarMonth, CompanyProfile,
+  ApplicantType, CalendarItem, CalendarMonth, CompanyProfile, UnlockHint,
 } from '@moai/shared';
 import { CalendarBoard, LEVEL_STYLE, formatMoney } from '@/components/calendar/calendar-board';
 import { BriefsModal } from '@/components/briefs/briefs-modal';
@@ -47,6 +47,7 @@ export default function DashboardPage() {
   const [month, setMonth] = useState<CalendarMonth | null>(null);
   const [upcoming, setUpcoming] = useState<CalendarItem[]>([]);
   const [profile, setProfile] = useState<CompanyProfile | null>(null);
+  const [hints, setHints] = useState<UnlockHint[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [expanded, setExpanded] = useState(false);
   const [stagePicker, setStagePicker] = useState(false);
@@ -57,7 +58,7 @@ export default function DashboardPage() {
   const load = useCallback(async () => {
     if (!session) return;
     try {
-      const [cal, soon, prof, plans] = await Promise.all([
+      const [cal, soon, prof, plans, unlock] = await Promise.all([
         calendarApi.month({
           year: today.getFullYear(),
           month: today.getMonth() + 1,
@@ -66,7 +67,10 @@ export default function DashboardPage() {
         calendarApi.upcoming(14, session.tenantId),
         calendarApi.defaultProfile(session.tenantId).catch(() => null),
         api.listProjects().catch(() => ({ items: [] as Project[] })),
+        // 안내가 안 떠도 대시보드는 떠야 한다
+        calendarApi.unlockHints(session.tenantId).catch(() => [] as UnlockHint[]),
       ]);
+      setHints(unlock);
       setMonth(cal);
       setUpcoming(soon);
       setProfile(prof);
@@ -238,8 +242,15 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* 내 정보 미완성 안내 */}
-      {!needsStage && filled.count < filled.total && (
+      {/*
+        **무엇을 채우면 몇 건이 풀리는지** 먼저 보여 준다.
+
+        "5/8 입력됨"은 왜 채워야 하는지 말해 주지 않는다. 효과 큰 칸을
+        공고 수와 함께 권하면, 한두 번 눌러서 끝낼 수 있다.
+      */}
+      {!needsStage && hints.some((h) => h.resolves > 0) ? (
+        <UnlockCard hints={hints.filter((h) => h.resolves > 0).slice(0, 3)} />
+      ) : !needsStage && filled.count < filled.total && (
         <Link href="/profile" className="mb-5 block">
           <Card className="border border-brand-light bg-brand-light transition-opacity hover:opacity-90">
             <div className="flex items-center justify-between gap-4">
@@ -484,5 +495,30 @@ function StatCard({
       <p className="mt-2 text-xs text-grey-400">{hint}</p>
 
     </div>
+  );
+}
+
+/** "이것만 답하면 N건이 바로 판정돼요" */
+function UnlockCard({ hints }: { hints: UnlockHint[] }) {
+  const [top, ...rest] = hints;
+  return (
+    <Link href={`/profile?focus=${top.field}`} className="mb-5 block">
+      <Card className="border border-brand-light bg-brand-light transition-opacity hover:opacity-90">
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="font-bold text-grey-900">
+              <span className="text-brand">{top.label}</span>만 답하면{' '}
+              <span className="tabular">{top.resolves}</span>건이 바로 판정돼요
+            </p>
+            {rest.length > 0 && (
+              <p className="mt-1 text-sm text-grey-700">
+                {rest.map((h) => `${h.label} ${h.resolves}건`).join(' · ')}도 기다리고 있어요
+              </p>
+            )}
+          </div>
+          <span className="shrink-0 text-sm font-bold text-brand">답하기 →</span>
+        </div>
+      </Card>
+    </Link>
   );
 }

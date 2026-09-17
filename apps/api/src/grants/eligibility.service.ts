@@ -273,6 +273,7 @@ export class EligibilityService {
       return [{
         field: '신청 대상',
         verdict: 'unknown',
+        profileField: 'stage',
         message: `${allowed} 대상 — 사업자 형태가 선택되지 않았습니다.`,
       }];
     }
@@ -311,6 +312,7 @@ export class EligibilityService {
       return [{
         field: '업력',
         verdict: 'unknown',
+        profileField: 'foundedAt',
         message: `${label} 대상 — 창업일이 등록되어 있지 않습니다.`,
       }];
     }
@@ -348,6 +350,7 @@ export class EligibilityService {
       return [{
         field: '지역',
         verdict: 'unknown',
+        profileField: 'region',
         message: `${label} 소재 기업 대상 — 사업장 지역이 등록되어 있지 않습니다.`,
       }];
     }
@@ -391,6 +394,7 @@ export class EligibilityService {
         return [{
           field: '지역',
           verdict: 'unknown',
+          profileField: 'regionDetail',
           message:
             `${districts.join('·')} 로 좁혀진 공고입니다 — ` +
             `${p.region} 까지만 등록되어 있어 해당 여부를 알 수 없습니다. ` +
@@ -423,6 +427,7 @@ export class EligibilityService {
       return [{
         field: '업종',
         verdict: 'unknown',
+        profileField: 'industry',
         message: '특정 업종 대상 — 업종이 등록되어 있지 않습니다.',
       }];
     }
@@ -458,6 +463,7 @@ export class EligibilityService {
       return [{
         field: '대표자 연령',
         verdict: 'unknown',
+        profileField: 'founderBirthYear',
         message: `${label} — 대표자 출생연도가 등록되어 있지 않습니다.`,
       }];
     }
@@ -513,6 +519,7 @@ export class EligibilityService {
       return [{
         field: '종업원 수',
         verdict: 'unknown',
+        profileField: 'employees',
         message: `${g.maxEmployees}인 이하 대상 — 종업원 수가 등록되어 있지 않습니다.`,
       }];
     }
@@ -545,6 +552,7 @@ export class EligibilityService {
       return [{
         field: '매출액',
         verdict: 'unknown',
+        profileField: 'annualRevenue',
         message: `${label} — 매출액이 등록되어 있지 않습니다.`,
       }];
     }
@@ -579,6 +587,7 @@ export class EligibilityService {
       return [{
         field: '법인 여부',
         verdict: 'unknown',
+        profileField: 'stage',
         message: '법인 사업자 대상 — 법인 여부가 등록되어 있지 않습니다.',
       }];
     }
@@ -675,6 +684,7 @@ export class EligibilityService {
     return [{
       field: '신청 대상 조건',
       verdict: 'unknown',
+      ...this.historyField(pending, p),
       message: `해당 여부 확인이 필요합니다 — ${this.shorten(pending.join(' / '))}`,
     }];
   }
@@ -790,6 +800,7 @@ export class EligibilityService {
     return [{
       field: '제외 대상',
       verdict: 'unknown',
+      ...this.historyField(pending, p),
       message: `확인이 필요한 조건 ${pending.length}건 — ${this.shorten(pending.join(' / '))}`,
     }];
   }
@@ -807,7 +818,7 @@ export class EligibilityService {
    */
   private checkTargetTraits(g: Grant, p: CompanyProfile): EligibilityReason[] {
     return detectTargetRequirements(g).map(({ requirement, certain, evidence }) => {
-      const { label, has, answered, ask } = this.traitOf(requirement, p);
+      const { label, has, answered, ask, profileField } = this.traitOf(requirement, p);
       const field = `대상 (${label})`;
 
       if (has) {
@@ -817,6 +828,7 @@ export class EligibilityService {
         return {
           field,
           verdict: 'unknown',
+          profileField,
           message: `${label} 대상으로 보입니다 — 내 정보에 ${ask}을(를) 입력하면 판정해 드립니다.`,
         };
       }
@@ -835,7 +847,14 @@ export class EligibilityService {
   private traitOf(
     r: TargetRequirement,
     p: CompanyProfile,
-  ): { label: string; has: boolean; answered: boolean; ask: string } {
+  ): {
+    label: string;
+    has: boolean;
+    answered: boolean;
+    ask: string;
+    /** 답을 받을 내 정보 칸 — "이것만 답하면 N건" 집계에 쓴다 */
+    profileField: string;
+  } {
     // 예비창업자는 사업체가 없으니 소상공인·수출기업일 수 없다. 답을 기다리지 않는다.
     const preliminary = p.stage === 'preliminary';
 
@@ -847,6 +866,7 @@ export class EligibilityService {
           has: traits.includes(r.trait as FounderTrait),
           answered: traits.length > 0, // ['none'] 도 답한 것이다
           ask: '대표자 특성',
+          profileField: 'founderTraits',
         };
       }
       case 'smallBusiness':
@@ -855,6 +875,7 @@ export class EligibilityService {
           has: p.isSmallBusiness === true,
           answered: preliminary || p.isSmallBusiness != null,
           ask: '소상공인 여부',
+          profileField: 'isSmallBusiness',
         };
       case 'socialEconomy': {
         const certs = p.certifications ?? [];
@@ -865,6 +886,7 @@ export class EligibilityService {
           ),
           answered: certs.length > 0, // ['해당 없음'] 도 답한 것이다
           ask: '보유 인증',
+          profileField: 'certifications',
         };
       }
       case 'exporting':
@@ -873,6 +895,7 @@ export class EligibilityService {
           has: p.exportStatus === 'exporting',
           answered: preliminary || p.exportStatus != null,
           ask: '수출 현황',
+          profileField: 'exportStatus',
         };
       case 'ip':
         return {
@@ -880,6 +903,7 @@ export class EligibilityService {
           has: p.hasIp === true,
           answered: p.hasIp != null,
           ask: '지식재산 보유 여부',
+          profileField: 'hasIp',
         };
     }
   }
@@ -904,6 +928,20 @@ export class EligibilityService {
 
     const mine = history.filter((h) => h !== NO_PAST_PROGRAM);
     return named.some((n) => mine.includes(n)) ? 'yes' : 'no';
+  }
+
+  /**
+   * 남은 조건이 선정 이력으로 답할 수 있는 것이면, 이력 칸을 가리킨다.
+   * 이력을 이미 골랐다면 `programAnswer` 가 답했을 테니 가리킬 것이 없다.
+   */
+  private historyField(
+    pending: string[],
+    p: CompanyProfile,
+  ): { profileField?: string } {
+    if ((p.pastPrograms ?? []).length > 0) return {};
+    return pending.some((c) => programsIn(c).length > 0)
+      ? { profileField: 'pastPrograms' }
+      : {};
   }
 
   /* ────────────── 유틸 ────────────── */

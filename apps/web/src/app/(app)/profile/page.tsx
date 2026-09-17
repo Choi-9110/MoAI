@@ -7,7 +7,7 @@ import {
   INDUSTRIES, NO_CERTIFICATION, NO_FOUNDER_TRAIT, NO_PAST_PROGRAM, PAST_PROGRAMS,
   districtsOf, isBusinessNumber, suggestSmallBusiness,
 } from '@moai/shared';
-import type { ExportStatus, Interest } from '@moai/shared';
+import type { ExportStatus, Interest, UnlockHint } from '@moai/shared';
 import {
   APPLICANT_TYPE_LABELS as STAGE_LABELS, INDUSTRY_LABELS,
 } from '@moai/shared';
@@ -90,6 +90,8 @@ export default function ProfilePage() {
   const params = useSearchParams();
   const welcome = params.get('welcome') === '1';
   const fromStage = params.get('from') === 'stage';
+  /** 대시보드의 "이것만 답하면"에서 왔으면 그 칸으로 데려간다 */
+  const focus = params.get('focus');
 
   const [form, setForm] = useState<FormState>(EMPTY);
   const [existing, setExisting] = useState<CompanyProfile | null>(null);
@@ -97,11 +99,16 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [hints, setHints] = useState<UnlockHint[]>([]);
 
   const load = useCallback(async () => {
     if (!session) return;
     try {
-      const p = await calendarApi.defaultProfile(session.tenantId).catch(() => null);
+      const [p, unlock] = await Promise.all([
+        calendarApi.defaultProfile(session.tenantId).catch(() => null),
+        calendarApi.unlockHints(session.tenantId).catch(() => [] as UnlockHint[]),
+      ]);
+      setHints(unlock);
       if (p) {
         setExisting(p);
         setForm({
@@ -143,6 +150,26 @@ export default function ProfilePage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  /*
+   * 폼이 그려진 뒤에 그 칸으로 스크롤한다. 칸 전체를 잠깐 강조해
+   * 긴 폼에서 어디를 보라는 건지 헤매지 않게 한다.
+   */
+  useEffect(() => {
+    if (loading || !focus) return;
+    const el = document.getElementById(`field-${focus}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('ring-2', 'ring-brand', 'rounded-xl');
+    const t = setTimeout(() => el.classList.remove('ring-2', 'ring-brand'), 2500);
+    return () => clearTimeout(t);
+  }, [loading, focus]);
+
+  /** 칸 이름 → 그 칸이 풀어 줄 공고 수 (라벨 옆에 보여 준다) */
+  const unlockOf = useMemo(
+    () => new Map(hints.map((h) => [h.field, h.resolves])),
+    [hints],
+  );
 
   /** 사업자가 없으면 사업자 관련 항목을 묻지 않는다. */
   const isPreliminary = form.stage === 'preliminary';
@@ -349,7 +376,9 @@ export default function ProfilePage() {
             <p className="mt-1 text-sm text-grey-500">
               {progress.done === progress.total
                 ? '모두 채웠어요. 가장 정확하게 판정해 드립니다.'
-                : '비워두면 해당 공고는 “조건부”로 표시돼요.'}
+                : hints[0]?.resolves
+                  ? `${hints[0].label}만 답해도 ${hints[0].resolves}건이 바로 판정돼요.`
+                  : '비워두면 해당 공고는 “조건부”로 표시돼요.'}
             </p>
           </div>
           <div className="h-2 w-28 shrink-0 overflow-hidden rounded-full bg-grey-100">
@@ -393,7 +422,7 @@ export default function ProfilePage() {
             />
           </div>
 
-          <div>
+          <div id="field-stage" className="scroll-mt-24 transition-shadow">
             <Label required hint="형태에 따라 신청할 수 있는 사업이 달라집니다">
               사업자 형태
             </Label>
@@ -431,8 +460,8 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <div>
-            <Label hint="공고의 업종 요건과 대조합니다">관심 업종</Label>
+          <div id="field-industry" className="scroll-mt-24 transition-shadow">
+            <Label hint="공고의 업종 요건과 대조합니다">관심 업종<UnlockBadge n={unlockOf.get('industry')} /></Label>
             <ChipGroup
               options={INDUSTRIES.map((i) => ({
                 value: i,
@@ -443,7 +472,7 @@ export default function ProfilePage() {
             />
           </div>
 
-          <div>
+          <div id="field-region" className="scroll-mt-24 transition-shadow">
             <Label hint={isPreliminary ? '거주지 기준입니다' : '사업장 소재지 기준입니다'}>
               지역
             </Label>
@@ -509,9 +538,10 @@ export default function ProfilePage() {
           */}
           <Section title="대표자" hint="청년·여성·재창업 전용 공고를 가려냅니다" />
 
-          <div>
+          <div id="field-founderBirthYear" className="scroll-mt-24 transition-shadow">
             <Label hint="청년 대상 공고(만 39세 이하 등) 판정에 씁니다">
               대표자 출생연도
+              <UnlockBadge n={unlockOf.get('founderBirthYear')} />
             </Label>
             <Input
               type="number"
@@ -531,9 +561,10 @@ export default function ProfilePage() {
             )}
           </div>
 
-          <div>
+          <div id="field-founderTraits" className="scroll-mt-24 transition-shadow">
             <Label hint="해당하는 것을 모두 고르세요. 없으면 “해당 없음”">
               대표자 특성
+              <UnlockBadge n={unlockOf.get('founderTraits')} />
             </Label>
             <MultiChips
               options={[
@@ -560,9 +591,10 @@ export default function ProfilePage() {
             <>
               <Section title="사업체" hint="규모·소상공인·수출 요건을 판정합니다" />
 
-              <div>
+              <div id="field-foundedAt" className="scroll-mt-24 transition-shadow">
                 <Label hint="사업자등록증상 개업일 — 업력 계산에 씁니다">
                   개업일
+                  <UnlockBadge n={unlockOf.get('foundedAt')} />
                 </Label>
                 <Input
                   type="date"
@@ -572,8 +604,8 @@ export default function ProfilePage() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label hint="대표 포함">종업원 수</Label>
+                <div id="field-employees" className="scroll-mt-24 transition-shadow">
+                  <Label hint="대표 포함">종업원 수<UnlockBadge n={unlockOf.get('employees')} /></Label>
                   <Input
                     type="number"
                     min={0}
@@ -582,8 +614,8 @@ export default function ProfilePage() {
                     placeholder="5"
                   />
                 </div>
-                <div>
-                  <Label hint="최근 연도 기준, 원 단위">연 매출액</Label>
+                <div id="field-annualRevenue" className="scroll-mt-24 transition-shadow">
+                  <Label hint="최근 연도 기준, 원 단위">연 매출액<UnlockBadge n={unlockOf.get('annualRevenue')} /></Label>
                   <Input
                     type="number"
                     min={0}
@@ -596,9 +628,10 @@ export default function ProfilePage() {
               </div>
 
               {/* 종업원 수 바로 밑 — 방금 넣은 숫자로 답이 거의 정해진다 */}
-              <div>
+              <div id="field-isSmallBusiness" className="scroll-mt-24 transition-shadow">
                 <Label hint="소상공인 전용 공고가 많아요 (제조·건설 10명 미만, 그 외 5명 미만)">
                   소상공인인가요?
+                  <UnlockBadge n={unlockOf.get('isSmallBusiness')} />
                 </Label>
                 <ChipGroup
                   options={[...YES_NO]}
@@ -617,16 +650,16 @@ export default function ProfilePage() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label hint="수출기업 전용 공고 판정">수출</Label>
+                <div id="field-exportStatus" className="scroll-mt-24 transition-shadow">
+                  <Label hint="수출기업 전용 공고 판정">수출<UnlockBadge n={unlockOf.get('exportStatus')} /></Label>
                   <ChipGroup
                     options={EXPORT_STATUSES.map((e) => ({ value: e, label: EXPORT_STATUS_LABELS[e] }))}
                     value={form.exportStatus}
                     onChange={(v) => set('exportStatus', v)}
                   />
                 </div>
-                <div>
-                  <Label hint="특허·실용신안·디자인권">지식재산 보유</Label>
+                <div id="field-hasIp" className="scroll-mt-24 transition-shadow">
+                  <Label hint="특허·실용신안·디자인권">지식재산 보유<UnlockBadge n={unlockOf.get('hasIp')} /></Label>
                   <ChipGroup
                     options={[...YES_NO]}
                     value={toYesNo(form.hasIp)}
@@ -635,8 +668,8 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div>
-                <Label hint="보유한 인증을 모두 선택하세요">보유 인증</Label>
+              <div id="field-certifications" className="scroll-mt-24 transition-shadow">
+                <Label hint="보유한 인증을 모두 선택하세요">보유 인증<UnlockBadge n={unlockOf.get('certifications')} /></Label>
                 <MultiChips
                   options={[...CERTIFICATIONS, NO_CERTIFICATION].map((c) => ({ value: c, label: c }))}
                   selected={form.certifications}
@@ -648,9 +681,10 @@ export default function ProfilePage() {
 
           <Section title="지원 이력" hint="“OO패키지 선정기업 대상”, “기수혜자 제외” 조건을 자동으로 답합니다" />
 
-          <div>
+          <div id="field-pastPrograms" className="scroll-mt-24 transition-shadow">
             <Label hint="관심 공고에서 “선정”으로 표시하면 자동으로 추가돼요">
               선정된 적 있는 사업
+              <UnlockBadge n={unlockOf.get('pastPrograms')} />
             </Label>
             <MultiChips
               options={[
@@ -734,5 +768,15 @@ function MultiChips({
         );
       })}
     </div>
+  );
+}
+
+/** 이 칸을 채우면 바로 판정되는 공고 수 — 0 이면 띄우지 않는다 */
+function UnlockBadge({ n }: { n?: number }) {
+  if (!n) return null;
+  return (
+    <span className="tabular ml-2 rounded-full bg-brand-light px-2 py-0.5 text-xs font-semibold text-brand">
+      {n}건 판정
+    </span>
   );
 }

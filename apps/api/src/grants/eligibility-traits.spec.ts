@@ -174,3 +174,26 @@ describe('EligibilityService — 선정 이력으로 조건에 답한다', () =>
     expect(reason(g, profile({ pastPrograms: ['none'] }), '제외 대상')?.verdict).toBe('pass');
   });
 });
+
+describe('EligibilityService — 막고 있는 내 정보 칸 표시', () => {
+  it('빈 칸 때문에 모르는 것에는 그 칸 이름을 단다', () => {
+    const g = grant({ title: '[대전] 2026년 소상공인 인건비 지원사업 공고', minAge: 19, maxAge: 39 });
+    const fields = svc
+      .evaluate(g, profile())
+      .reasons.filter((r) => r.verdict === 'unknown')
+      .map((r) => r.profileField);
+    expect(fields).toEqual(expect.arrayContaining(['isSmallBusiness', 'founderBirthYear']));
+  });
+
+  it('공고 쪽이 모호해 모르는 것에는 달지 않는다 — 채워도 안 풀린다', () => {
+    const g = grant({ title: '직장문화개선 컨설팅', applyTargetDetail: '여성기업' });
+    const r = reason(g, profile({ founderTraits: ['none'] }), '대상');
+    expect(r?.verdict).toBe('unknown');
+    expect(r?.profileField).toBeUndefined();
+  });
+
+  it('선정 이력으로 답할 수 있는 조건은 이력 칸을 가리킨다', () => {
+    const g = grant({ applyTargetDetail: "'23년~'26년 초기창업패키지 선정기업" });
+    expect(reason(g, profile(), '신청 대상 조건')?.profileField).toBe('pastPrograms');
+  });
+});

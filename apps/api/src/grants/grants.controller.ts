@@ -87,6 +87,19 @@ export class GrantsController {
     });
   }
 
+  /**
+   * 내 정보에서 먼저 채우면 좋은 칸 — 막고 있는 공고 수 순.
+   *
+   *   GET /api/grants/eligibility/unlock?tenantId=...
+   *
+   * `:id/eligibility` 보다 **위에** 둔다. 아래에 두면 `eligibility` 가
+   * 공고 id 자리로 읽혀 UUID 검사에서 400 이 난다.
+   */
+  @Get('eligibility/unlock')
+  unlock(@Query() query: ExplainQueryDto) {
+    return this.calendar.unlockHints(query);
+  }
+
   /** 마감 임박 공고 (기본 14일) */
   @Get('calendar/upcoming')
   upcoming(@Query() query: UpcomingQueryDto) {
