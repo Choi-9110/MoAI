@@ -1,0 +1,29 @@
+{
+  "name": "moai",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "dev:web": "pnpm --filter @moai/web dev",
+    "dev:api": "pnpm --filter @moai/api start:dev",
+    "dev:agent": "pnpm --filter @moai/agent start:dev",
+    "seed": "pnpm --filter @moai/api seed",
+    "build:shared": "pnpm --filter @moai/shared build",
+    "docker:api": "docker build -f apps/api/Dockerfile -t moai-api .",
+    "deploy": "node scripts/deploy.mjs",
+    "status": "node scripts/status.mjs",
+    "fresh": "node scripts/fresh.mjs",
+    "log": "node scripts/log.mjs"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.4",
+    "typescript": "^5.7.3"
+  }
+}

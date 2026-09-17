@@ -1,0 +1,42 @@
+{
+  "total": 29834,
+  "active": 278,
+  "srcs": {
+    "kstartup": 29834
+  },
+  "cats": {
+    "contest": 4293,
+    "education": 8211,
+    "space": 7362,
+    "funding": 7166,
+    "loan": 310,
+    "export": 2076,
+    "rnd": 334,
+    "employment": 82
+  },
+  "fill": {
+    "id": 29834,
+    "createdAt": 29834,
+    "updatedAt": 29834,
+    "title": 29834,
+    "agency": 29834,
+    "agencyType": 29834,
+    "category": 29834,
+    "applicantTypes": 29821,
+    "recurrence": 29834,
+    "maxBusinessYears": 29810,
+    "sourceUrl": 29834,
+    "sourceApi": 29834,
+    "externalId": 29834,
+    "rawMetadata": 29834,
+    "isActive": 29834,
+    "targetRegions": 13539,
+    "applyStartAt": 29735,
+    "applyEndAt": 29735,
+    "summary": 22316,
+    "applyTargetDetail": 271,
+    "excludeTarget": 121,
+    "minAge": 74,
+    "maxAge": 15
+  }
+}

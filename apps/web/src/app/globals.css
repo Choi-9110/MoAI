@@ -1,0 +1,301 @@
+@import "tailwindcss";
+
+/*
+ * moai 디자인 토큰 — TDS(토스 디자인 시스템) 기준.
+ *
+ * 원칙
+ *  - 회색 배경 위에 흰 카드. 그림자는 최소, 경계는 여백으로 만든다.
+ *  - 포인트 컬러는 파랑 하나. 나머지 색은 상태 표현에만 쓴다.
+ *  - 큼직한 터치 영역(버튼 48~56px), 넉넉한 라운드(카드 16px).
+ *  - 1차 범위는 라이트 모드 고정.
+ */
+:root {
+  color-scheme: light;
+
+  /* Grey scale */
+  --grey-900: #191f28;
+  --grey-800: #333d4b;
+  --grey-700: #4e5968;
+  --grey-600: #6b7684;
+  --grey-500: #8b95a1;
+  --grey-400: #b0b8c1;
+  --grey-300: #d1d6db;
+  --grey-200: #e5e8eb;
+  --grey-100: #f2f4f6;
+  --grey-50: #f9fafb;
+
+  /* Brand */
+  --blue: #3182f6;
+  --blue-hover: #1b64da;
+  --blue-light: #e8f3ff;
+
+  /* Semantic */
+  --red: #f04452;
+  --red-light: #ffeaec;
+  --green: #15c47e;
+  --green-light: #e5f8f0;
+  --orange: #ff9500;
+  --orange-light: #fff4e6;
+
+  /*
+   * 상태색 — 글자로 쓰는 진한 쪽.
+   *
+   * 위의 `--red/--green/--orange` 는 **면(面)에 칠하라고 만든 색**이라
+   * 글자로 쓰면 안 읽힌다. 흰 배경 대비가 각각 3.71 / 2.28 / 2.20 으로
+   * 본문 기준(4.5)에 한참 못 미친다.
+   *
+   * 그래서 화면마다 `#c62828` 같은 색을 직접 적어 왔는데, 그러다 보니
+   * 같은 "위험"이 화면마다 다른 빨강이 됐다. 여기서 한 벌로 모은다.
+   *
+   *   strong — 연한 배경 위 글자, 흰 글자 위 배경 (대비 5 이상)
+   *   deep   — 연한 배경 위에서 더 또렷해야 할 때 (대비 7 이상)
+   *   soft   — 칩·배너의 연한 바탕
+   */
+  --red-strong: #c62828;    /* 흰글자 5.62 / soft 위 4.88 */
+  --red-deep: #b91c1c;      /* 흰글자 6.47 */
+  --red-soft: #ffebee;
+  --green-strong: #2e7d32;  /* 흰글자 5.13 */
+  --green-deep: #1b5e20;    /* soft 위 7.13 */
+  --green-soft: #e8f5e9;
+  --orange-strong: #b45309; /* 흰글자 5.02 — 예전 #e65100 은 3.79 로 부족했다 */
+  --orange-soft: #fff8e1;
+
+  /*
+   * 노랑 — 판정 4단계 중 "조건이 자라야 하는" 칸.
+   *
+   * 신호등에 초록·주황·빨강만 있으면 네 단계를 셋으로 눌러 담게 된다.
+   * 그래서 한 칸을 더 둔다. 대비가 낮은 노랑은 글자로 못 쓰므로
+   * (`#b39000` 은 2.96) 진한 쪽을 따로 잡아 둔다.
+   */
+  --yellow-strong: #8d6e00; /* soft 위 4.69 */
+  --yellow-soft: #fffde7;
+  /** 즐겨찾기 별 — 채워진 상태 */
+  --star: #f9a825;
+
+  /*
+   * 분류색 — 로드맵의 자금 종류(지원사업·투자·융자·TIPS).
+   *
+   * **상태색이 아니다.** "포인트는 파랑 하나" 원칙의 예외라 여기 따로 적어
+   * 둔다. 단계마다 성격이 다른 돈이라 색으로 갈라야 읽히고, 사용자가 준
+   * 자료의 범례를 그대로 따랐다.
+   */
+  --kind-grant: #1565c0;
+  --kind-grant-soft: #e3f2fd;
+  --kind-invest: #00695c;
+  --kind-invest-soft: #e0f2f1;
+  --kind-loan: #37474f;
+  --kind-loan-soft: #eceff1;
+  --kind-tips: #6a1b9a;
+  --kind-tips-soft: #f3e5f5;
+
+  /*
+   * moai 브랜드 (브랜드킷 v2 · 딥 그린)
+   *
+   * 원칙 — 그라데이션·글래스모피즘·과한 모션 금지.
+   * 1px 보더가 그림자를 대신한다. 문서처럼 읽히게.
+   */
+  --moai-accent: #00704a;
+  --moai-accent-hover: #005e3f;
+  --moai-accent-100: #cfe4d8;
+  --moai-accent-50: #eaf4ee;
+
+  --moai-ink: #1e3932;        /* 본문 */
+  --moai-muted: #6e7b75;      /* 보조 */
+  --moai-subtle: #a2ada8;     /* 흐린 글자 */
+  --moai-surface: #f7f5f0;    /* 웜 배경 */
+  --moai-border: #e3e0d9;     /* 1px 보더 */
+  --moai-border-soft: #e9e6de;
+
+  /* 판정·확신도 의미 색 — 캘린더의 초록/주황/빨강과 같은 뜻이다 */
+  --moai-confirmed-bg: #eaf4ee;
+  --moai-confirmed-fg: #00704a;
+  --moai-needs-user-bg: #fffbeb;
+  --moai-needs-user-fg: #b45309;
+  /** 그 배너의 1px 테두리 — 화면마다 `#fde68a` 를 직접 적고 있었다 */
+  --moai-needs-user-border: #fde68a;
+  --moai-risk-bg: #fef2f2;
+  --moai-risk-fg: #b91c1c;
+
+  --background: var(--grey-50);
+  --foreground: var(--grey-900);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-grey-900: var(--grey-900);
+  --color-grey-800: var(--grey-800);
+  --color-grey-700: var(--grey-700);
+  --color-grey-600: var(--grey-600);
+  --color-grey-500: var(--grey-500);
+  --color-grey-400: var(--grey-400);
+  --color-grey-300: var(--grey-300);
+  --color-grey-200: var(--grey-200);
+  --color-grey-100: var(--grey-100);
+  --color-grey-50: var(--grey-50);
+
+  --color-brand: var(--blue);
+  --color-brand-hover: var(--blue-hover);
+  --color-brand-light: var(--blue-light);
+
+  --color-danger: var(--red);
+  --color-danger-light: var(--red-light);
+  --color-success: var(--green);
+  --color-success-light: var(--green-light);
+  --color-warning: var(--orange);
+  --color-warning-light: var(--orange-light);
+
+  /* 글자로 쓰는 상태색 */
+  --color-danger-strong: var(--red-strong);
+  --color-danger-deep: var(--red-deep);
+  --color-danger-soft: var(--red-soft);
+  --color-success-strong: var(--green-strong);
+  --color-success-deep: var(--green-deep);
+  --color-success-soft: var(--green-soft);
+  --color-warning-strong: var(--orange-strong);
+  --color-warning-soft: var(--orange-soft);
+  --color-caution: var(--yellow-strong);
+  --color-caution-soft: var(--yellow-soft);
+  --color-star: var(--star);
+
+  /* 자금 종류 (로드맵) */
+  --color-kind-grant: var(--kind-grant);
+  --color-kind-grant-soft: var(--kind-grant-soft);
+  --color-kind-invest: var(--kind-invest);
+  --color-kind-invest-soft: var(--kind-invest-soft);
+  --color-kind-loan: var(--kind-loan);
+  --color-kind-loan-soft: var(--kind-loan-soft);
+  --color-kind-tips: var(--kind-tips);
+  --color-kind-tips-soft: var(--kind-tips-soft);
+
+  /* 브랜드 (한 장 요약 등 문서형 화면) */
+  --color-moai: var(--moai-accent);
+  --color-moai-hover: var(--moai-accent-hover);
+  --color-moai-100: var(--moai-accent-100);
+  --color-moai-50: var(--moai-accent-50);
+  --color-moai-ink: var(--moai-ink);
+  --color-moai-muted: var(--moai-muted);
+  --color-moai-subtle: var(--moai-subtle);
+  --color-moai-surface: var(--moai-surface);
+  --color-moai-border: var(--moai-border);
+  --color-moai-border-soft: var(--moai-border-soft);
+  --color-confirmed: var(--moai-confirmed-fg);
+  --color-confirmed-bg: var(--moai-confirmed-bg);
+  --color-needs-user: var(--moai-needs-user-fg);
+  --color-needs-user-bg: var(--moai-needs-user-bg);
+  --color-needs-user-soft: var(--moai-needs-user-border);
+  --color-risk: var(--moai-risk-fg);
+  --color-risk-bg: var(--moai-risk-bg);
+
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, "Segoe UI", sans-serif;
+
+  --radius-card: 16px;
+  --radius-field: 12px;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 숫자가 세로로 정렬되도록 (캘린더 날짜·금액·통계) */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 포커스 링 — 파란 테두리로 통일 */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* 스크롤바 (사이드바·모달용) */
+.thin-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: var(--grey-300);
+  border-radius: 3px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/*
+ * 캘린더에서 공고를 누르면 우측 목록의 해당 항목을 잠깐 깜빡여 위치를 알린다.
+ * 사용자가 그 항목을 직접 누르면 멈춘다 — 무한히 깜빡이면 오히려 방해가 된다.
+ */
+@keyframes blink-highlight {
+  0%,
+  100% {
+    background-color: transparent;
+    border-color: var(--grey-200);
+  }
+  50% {
+    background-color: var(--blue-light);
+    border-color: var(--blue);
+  }
+}
+
+.blink-highlight {
+  animation: blink-highlight 0.55s ease-in-out 5;
+}
+
+/*
+ * 인쇄 — "PDF로 저장" 이 이 규칙을 탄다.
+ *
+ * 화면용으로 만든 것들(좌측 메뉴·버튼·단계 표시)이 종이에 같이 찍히면
+ * 문서가 아니라 화면 사진처럼 보인다. 본문만 남긴다.
+ *
+ * 스크롤 영역도 풀어 준다 — 화면에서는 안쪽 div 가 스크롤하는데, 그대로
+ * 두면 **첫 화면에 보이는 만큼만 인쇄된다.** 실제로 그렇게 잘린다.
+ */
+@media print {
+  aside,
+  nav[aria-label='작성 단계'],
+  header button,
+  .no-print {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+  }
+
+  /* 스크롤 컨테이너를 펼쳐서 전체가 흐르게 한다 */
+  .thin-scroll,
+  [class*='overflow-y-auto'],
+  [class*='overflow-hidden'] {
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+  }
+
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  /* 절이 페이지 경계에서 반토막 나지 않게 */
+  section,
+  article {
+    break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: '';
+  }
+}

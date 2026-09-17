@@ -1,0 +1,39 @@
+node_modules/
+dist/
+.next/
+out/
+build/
+.turbo/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+coverage/
+*.tsbuildinfo
+.pnpm-store/
+/tmp/
+workspace/
+
+# Cloudflare 터널 실행 파일 (배포 산출물 아님)
+.tools/
+
+# IR 덱 등 사용자가 올린 파일 — 저장소에 들어가면 안 된다
+apps/api/storage/
+
+# PM2 로그 — 실행 기록이라 저장소에 넣지 않는다
+logs/
+
+# 로컬 수동 테스트 스크립트 — 로그인 토큰(JWT)을 파일에 남기므로 올리지 않는다
+apps/api/.gen-project
+apps/api/.kill-test
+apps/api/.resume-test
+apps/api/gen.js
+apps/api/p.js
+apps/api/t.js
+apps/api/w.js
+apps/api/watch.mjs
+
+# 지원사업 신청서 작업 문서 — 공개 저장소에 올리지 않는다
+.claude/*
+!.claude/skills/

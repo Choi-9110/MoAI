@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+<style>
+  body { margin: 0; background: #F7F5F0; }
+  a { color: #00704A; text-decoration: none; }
+  a:hover { color: #005E3F; text-decoration: underline; }
+</style>
+</helmet>
+<div style="--accent: {{ accent }}; --page: {{ pageTone }}; --sw: {{ sw }}; background: var(--page, #F7F5F0); color: #1E3932; font-family: 'Pretendard Variable', Pretendard, -apple-system, system-ui, sans-serif; font-size: 15px; line-height: 1.7; letter-spacing: -0.011em; padding: 72px 32px 120px; text-wrap: pretty;">
+<div style="max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px;">
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 56px; display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: center;">
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; letter-spacing: 0.08em; color: #A2ADA8;">BRAND KIT · v2.0 GREEN · 2026.08</span>
+      <div style="display: flex; align-items: center; gap: 14px;">
+        <svg viewBox="0 0 48 48" width="44" height="44" style="display: block; border-radius: 11px;"><rect x="0" y="0" width="48" height="48" rx="12" fill="var(--accent, #00704A)"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="1.6" fill="#FFFFFF"></circle><circle cx="27" cy="23.5" r="1.6" fill="#FFFFFF"></circle></svg>
+        <span style="font-size: 40px; font-weight: 700; letter-spacing: -0.035em; line-height: 1;">moai</span>
+      </div>
+      <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.35;">정부지원사업 사업계획서,<br />초안부터 함께 씁니다</h1>
+      <p style="margin: 0; max-width: 520px; color: #6E7B75;">moai의 로고·컬러·타이포·아이콘·컴포넌트 규칙을 한 파일에 모았습니다. 관공서 제출 문서를 다루는 도구이므로 모든 결정은 <strong style="font-weight: 600; color: #1E3932;">차분한 전문성</strong> 하나로 수렴합니다.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;">
+        <span style="border: 1px solid var(--accent, #00704A); background: #EAF4EE; border-radius: 9999px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--accent, #00704A);">V2 · 딥 그린</span>
+        <span style="border: 1px solid #E3E0D9; border-radius: 9999px; padding: 6px 14px; font-size: 13px; color: #55625C;">라이트 모드 전용</span>
+        <span style="border: 1px solid #E3E0D9; border-radius: 9999px; padding: 6px 14px; font-size: 13px; color: #55625C;">딥 그린 + 웜 그레이</span>
+        <span style="border: 1px solid #E3E0D9; border-radius: 9999px; padding: 6px 14px; font-size: 13px; color: #55625C;">Pretendard</span>
+        <span style="border: 1px solid #E3E0D9; border-radius: 9999px; padding: 6px 14px; font-size: 13px; color: #55625C;">선형 아이콘 114종</span>
+      </div>
+    </div>
+    <div style="background: #F7F5F0; border: 1px solid #E9E6DE; border-radius: 16px; padding: 32px; display: flex; flex-direction: column; align-items: center; gap: 18px;">
+      <svg viewBox="0 0 48 48" width="132" height="132" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="var(--accent, #00704A)"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="1.6" fill="#FFFFFF"></circle><circle cx="27" cy="23.5" r="1.6" fill="#FFFFFF"></circle></svg>
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 11px; color: #A2ADA8; letter-spacing: 0.04em;">SYMBOL / 48 GRID</span>
+    </div>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">01</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">브랜드 기본</h2>
+    </div>
+    <p style="margin: 8px 0 32px; max-width: 640px; color: #6E7B75;">이름의 뜻과 목소리의 기준. 모든 화면 결정은 아래 네 가지 원칙 중 하나로 설명될 수 있어야 합니다.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 13px; font-weight: 600; color: var(--accent, #00704A);">이름</span>
+        <p style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.02em;">오래 서 있는 문서</p>
+        <p style="margin: 0; color: #6E7B75;">모아이 석상은 장식이 없고, 오래 남습니다. 사업계획서도 그래야 합니다. 소문자 <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 13px;">moai</span>로만 표기하고 문장 시작에서도 대문자로 쓰지 않습니다.</p>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 8px;">
+        <span style="font-size: 13px; font-weight: 600; color: var(--accent, #00704A);">태그라인</span>
+        <p style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.02em;">아이디어 한 줄에서, 제출 가능한 초안까지</p>
+        <p style="margin: 0; color: #6E7B75;">보조 문구: &ldquo;12개 질문에 답하면 7개 섹션이 완성됩니다&rdquo; / &ldquo;AI가 모르는 건 모른다고 말합니다&rdquo;</p>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="background: #F7F5F0; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
+        <svg viewBox="0 0 24 24" width="24" height="24" style="display: block; color: var(--accent, #00704A);"><path d="M6 3h7l5 5v13H6z"></path><path d="M13 3v5h5"></path></svg>
+        <span style="font-size: 15px; font-weight: 600;">차분한 전문성</span>
+        <span style="font-size: 13px; line-height: 1.6; color: #6E7B75; stroke: none;">그라데이션·글래스모피즘·과한 모션 금지. 1px 보더가 그림자를 대신함.</span>
+      </div>
+      <div style="background: #F7F5F0; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
+        <svg viewBox="0 0 24 24" width="24" height="24" style="display: block; color: var(--accent, #00704A);"><path d="M9 7h11M9 12h11M9 17h11"></path><circle cx="5" cy="7" r="1" fill="currentColor" stroke="none"></circle><circle cx="5" cy="12" r="1" fill="currentColor" stroke="none"></circle><circle cx="5" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg>
+        <span style="font-size: 15px; font-weight: 600;">문서처럼 읽히게</span>
+        <span style="font-size: 13px; line-height: 1.6; color: #6E7B75; stroke: none;">본문 15px / 행간 1.7, 최대폭 880px. 가독성이 장식을 이김.</span>
+      </div>
+      <div style="background: #F7F5F0; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
+        <svg viewBox="0 0 24 24" width="24" height="24" style="display: block; color: var(--accent, #00704A);"><rect x="3" y="8" width="18" height="8" rx="4"></rect><path d="M8.5 12l2 2 3.5-4"></path></svg>
+        <span style="font-size: 15px; font-weight: 600;">한 번에 하나씩</span>
+        <span style="font-size: 13px; line-height: 1.6; color: #6E7B75; stroke: none;">질문 하나에 카드 하나. 진행률은 언제나 화면에 고정.</span>
+      </div>
+      <div style="background: #F7F5F0; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
+        <svg viewBox="0 0 24 24" width="24" height="24" style="display: block; color: var(--accent, #00704A);"><circle cx="12" cy="12" r="8"></circle><path d="M9.6 9.8a2.5 2.5 0 1 1 3.4 2.3v1.3"></path><circle cx="12.6" cy="16.4" r="1" fill="currentColor" stroke="none"></circle></svg>
+        <span style="font-size: 15px; font-weight: 600;">불확실성을 숨기지 않기</span>
+        <span style="font-size: 13px; line-height: 1.6; color: #6E7B75; stroke: none;">지어내지 않고 표시함. 확신도 배지가 제품의 약속임.</span>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">02</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">로고</h2>
+    </div>
+    <p style="margin: 8px 0 32px; max-width: 640px; color: #6E7B75;">심볼은 정면을 향한 석상과 지면선. 워드마크는 Pretendard Bold 소문자, 자간 -3.5%. 심볼과 워드마크는 항상 같은 광학 높이로 정렬합니다.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px;">
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; overflow: hidden;">
+        <div style="height: 156px; display: flex; align-items: center; justify-content: center; background: #FFFFFF;">
+          <svg viewBox="0 0 48 48" width="64" height="64" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="var(--accent, #00704A)"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="1.6" fill="#FFFFFF"></circle><circle cx="27" cy="23.5" r="1.6" fill="#FFFFFF"></circle></svg>
+        </div>
+        <div style="border-top: 1px solid #E3E0D9; padding: 14px 18px; display: flex; flex-direction: column;">
+          <span style="font-size: 14px; font-weight: 600;">심볼 · 기본</span>
+          <span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">symbol-accent</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; overflow: hidden;">
+        <div style="height: 156px; display: flex; align-items: center; justify-content: center; background: #FFFFFF;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <svg viewBox="0 0 48 48" width="34" height="34" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="var(--accent, #00704A)"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="1.6" fill="#FFFFFF"></circle><circle cx="27" cy="23.5" r="1.6" fill="#FFFFFF"></circle></svg>
+            <span style="font-size: 30px; font-weight: 700; letter-spacing: -0.035em; line-height: 1;">moai</span>
+          </div>
+        </div>
+        <div style="border-top: 1px solid #E3E0D9; padding: 14px 18px; display: flex; flex-direction: column;">
+          <span style="font-size: 14px; font-weight: 600;">가로 조합 · 기본 사용</span>
+          <span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">lockup-horizontal</span>
+        </div>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; overflow: hidden;">
+        <div style="height: 156px; display: flex; align-items: center; justify-content: center; background: #FFFFFF;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <svg viewBox="0 0 48 48" width="40" height="40" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="var(--accent, #00704A)"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="1.6" fill="#FFFFFF"></circle><circle cx="27" cy="23.5" r="1.6" fill="#FFFFFF"></circle></svg>
+            <span style="font-size: 22px; font-weight: 700; letter-spacing: -0.035em; line-height: 1;">moai</span>
+          </div>
+        </div>
+        <div style="border-top: 1px solid #E3E0D9; padding: 14px 18px; display: flex; flex-direction: column;">
+          <span style="font-size: 14px; font-weight: 600;">세로 조합 · 좁은 폭</span>
+          <span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">lockup-stacked</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px;">
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; height: 120px; display: flex; align-items: center; justify-content: center; background: #1E3932;">
+        <svg viewBox="0 0 48 48" width="48" height="48" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="#FFFFFF"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#1E3932" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#1E3932" stroke-width="2.6" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="1.6" fill="#1E3932"></circle><circle cx="27" cy="23.5" r="1.6" fill="#1E3932"></circle></svg>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; height: 120px; display: flex; align-items: center; justify-content: center; background: #FFFFFF;">
+        <svg viewBox="0 0 48 48" width="48" height="48" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="#1E3932"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="1.6" fill="#FFFFFF"></circle><circle cx="27" cy="23.5" r="1.6" fill="#FFFFFF"></circle></svg>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; height: 120px; display: flex; align-items: center; justify-content: center; background: #FFFFFF;">
+        <svg viewBox="0 0 48 48" width="48" height="48" style="display: block;"><rect x="0.9" y="0.9" width="46.2" height="46.2" rx="11.4" fill="#FFFFFF" stroke="#E3E0D9" stroke-width="1.8"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="var(--accent, #00704A)" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="var(--accent, #00704A)" stroke-width="2.6" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="1.6" fill="var(--accent, #00704A)"></circle><circle cx="27" cy="23.5" r="1.6" fill="var(--accent, #00704A)"></circle></svg>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; height: 120px; display: flex; align-items: center; justify-content: center; gap: 20px; background: #F7F5F0;">
+        <svg viewBox="0 0 48 48" width="24" height="24" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="var(--accent, #00704A)"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="2" fill="#FFFFFF"></circle><circle cx="27" cy="23.5" r="2" fill="#FFFFFF"></circle></svg>
+        <svg viewBox="0 0 48 48" width="16" height="16" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="var(--accent, #00704A)"></rect><path d="M16 34V22a8 8 0 0 1 16 0v12" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"></path></svg>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px;">
+        <p style="margin: 0 0 16px; font-size: 17px; font-weight: 600; letter-spacing: -0.02em;">여백과 최소 크기</p>
+        <div style="background: #F7F5F0; border-radius: 12px; padding: 32px; display: flex; justify-content: center;">
+          <div style="border: 1px dashed #A2ADA8; border-radius: 8px; padding: 16px; display: flex;">
+            <svg viewBox="0 0 48 48" width="64" height="64" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="var(--accent, #00704A)"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><circle cx="21" cy="23.5" r="1.6" fill="#FFFFFF"></circle><circle cx="27" cy="23.5" r="1.6" fill="#FFFFFF"></circle></svg>
+          </div>
+        </div>
+        <ul style="margin: 16px 0 0; padding-left: 18px; color: #6E7B75; font-size: 14px; line-height: 1.8;">
+          <li>보호 여백 = 심볼 높이의 <strong style="color: #1E3932; font-weight: 600;">1/4</strong>. 그 안에는 어떤 요소도 두지 않음</li>
+          <li>최소 크기: 심볼 16px, 가로 조합 96px, 세로 조합 64px</li>
+          <li>16px 이하에서는 눈과 지면선을 생략한 축약형 사용</li>
+        </ul>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px;">
+        <p style="margin: 0 0 16px; font-size: 17px; font-weight: 600; letter-spacing: -0.02em;">금지 사례</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; color: #B91C1C;">
+          <div style="background: #F7F5F0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <svg viewBox="0 0 48 48" width="48" height="32" preserveAspectRatio="none" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="12" fill="#A2ADA8"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path></svg>
+            <span style="font-size: 12px; font-weight: 600;">비율 변경</span>
+          </div>
+          <div style="background: #F7F5F0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <svg viewBox="0 0 48 48" width="36" height="36" style="display: block; transform: rotate(-14deg);"><rect x="0" y="0" width="48" height="48" rx="12" fill="#A2ADA8"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path></svg>
+            <span style="font-size: 12px; font-weight: 600;">회전 · 기울임</span>
+          </div>
+          <div style="background: #F7F5F0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <svg viewBox="0 0 48 48" width="36" height="36" style="display: block;"><rect x="0" y="0" width="48" height="48" rx="24" fill="#7C3AED"></rect><path d="M16 34V21a8 8 0 0 1 16 0v13" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path><path d="M13.5 34h21" fill="none" stroke="#FFFFFF" stroke-width="2.6" stroke-linecap="round"></path></svg>
+            <span style="font-size: 12px; font-weight: 600;">임의 색 · 라운드</span>
+          </div>
+          <div style="background: #F7F5F0; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <span style="font-size: 26px; font-weight: 700; letter-spacing: 0.14em; line-height: 1.3; color: #A2ADA8;">MOAI</span>
+            <span style="font-size: 12px; font-weight: 600;">대문자 · 자간 임의</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">03</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">컬러</h2>
+    </div>
+    <p style="margin: 8px 0 32px; max-width: 640px; color: #6E7B75;">웜 그레이가 화면의 98%. 딥 그린은 &lsquo;다음 행동&rsquo;과 &lsquo;확정&rsquo;에만, 앰버·레드는 확신도 표현에만 씁니다. 카드마다 다른 색을 쓰지 않습니다.</p>
+
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">NEUTRAL</p>
+    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-bottom: 32px;">
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #FFFFFF; border: 1px solid #E3E0D9;"></div><div style="display: flex; flex-direction: column;"><span style="font-size: 13px; font-weight: 600;">bg</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#FFFFFF</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #F7F5F0; border: 1px solid #E3E0D9;"></div><div style="display: flex; flex-direction: column;"><span style="font-size: 13px; font-weight: 600;">surface</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#F7F5F0</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #EFEDE6; border: 1px solid #E3E0D9;"></div><div style="display: flex; flex-direction: column;"><span style="font-size: 13px; font-weight: 600;">surface-2</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#EFEDE6</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #E3E0D9;"></div><div style="display: flex; flex-direction: column;"><span style="font-size: 13px; font-weight: 600;">border</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#E3E0D9</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #A2ADA8;"></div><div style="display: flex; flex-direction: column;"><span style="font-size: 13px; font-weight: 600;">text-subtle</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#A2ADA8</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #6E7B75;"></div><div style="display: flex; flex-direction: column;"><span style="font-size: 13px; font-weight: 600;">text-muted</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#6E7B75</span></div></div>
+      <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #1E3932;"></div><div style="display: flex; flex-direction: column;"><span style="font-size: 13px; font-weight: 600;">text</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#1E3932</span></div></div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+      <div>
+        <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">ACCENT · 딥 그린</p>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #EAF4EE; border: 1px solid #E3E0D9;"></div><span style="font-size: 12px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">50 · #EAF4EE</span></div>
+          <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #CFE4D8;"></div><span style="font-size: 12px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">100 · #CFE4D8</span></div>
+          <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: var(--accent, #00704A);"></div><span style="font-size: 12px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">600 · accent</span></div>
+          <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #005E3F;"></div><span style="font-size: 12px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">700 · #005E3F</span></div>
+        </div>
+        <p style="margin: 14px 0 0; font-size: 13px; color: #6E7B75;">쓰는 곳: 주요 버튼 / 링크 / 포커스 링 / 진행률 채움 / 현재 단계 / 확정 배지. 한 화면에 그린 면적은 5% 이하.</p>
+      </div>
+      <div>
+        <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">STATE · 확신도</p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #EAF4EE; border: 1px solid #CFE4D8; display: flex; align-items: center; justify-content: center;"><span style="font-size: 14px; font-weight: 600; color: #00704A;">확정</span></div><span style="font-size: 12px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#EAF4EE / #00704A</span></div>
+          <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #FFFBEB; border: 1px solid #FDE68A; display: flex; align-items: center; justify-content: center;"><span style="font-size: 14px; font-weight: 600; color: #B45309;">확인 필요</span></div><span style="font-size: 12px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#FFFBEB / #B45309</span></div>
+          <div style="display: flex; flex-direction: column; gap: 10px;"><div style="height: 84px; border-radius: 12px; background: #FEF2F2; border: 1px solid #FECACA; display: flex; align-items: center; justify-content: center;"><span style="font-size: 14px; font-weight: 600; color: #B91C1C;">리스크</span></div><span style="font-size: 12px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">#FEF2F2 / #B91C1C</span></div>
+        </div>
+        <p style="margin: 14px 0 0; font-size: 13px; color: #6E7B75;">상태 컬러는 배지·안내 박스에만. 본문 텍스트나 카드 배경 전체에는 쓰지 않음.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">04</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">타이포그래피</h2>
+    </div>
+    <p style="margin: 8px 0 32px; max-width: 640px; color: #6E7B75;">Pretendard Variable 단일 서체. 굵기는 400 / 600 / 700만 사용하고, 한글 가독성을 위해 제목에만 음수 자간을 적용합니다.</p>
+    <div style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="display: grid; grid-template-columns: 1fr 190px; gap: 20px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid #E9E6DE;"><span style="font-size: 32px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.35;">사업계획서 초안이 완성됐어요</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">display · 32 / 700 / -3%</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 190px; gap: 20px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid #E9E6DE;"><span style="font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">내 사업계획서</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">title · 24 / 700</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 190px; gap: 20px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid #E9E6DE;"><span style="font-size: 17px; font-weight: 600; letter-spacing: -0.02em;">3. 실현 가능성</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">subtitle · 17 / 600</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 190px; gap: 20px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid #E9E6DE;"><span style="font-size: 15px; line-height: 1.7;">국내 예비창업자의 68%가 사업계획서 작성 단계에서 지원 신청을 포기함. 본 서비스는 표준 양식 기반 초안 자동 생성으로 해당 이탈을 해소함.</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">body · 15 / 1.7</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 190px; gap: 20px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid #E9E6DE;"><span style="font-size: 13px; color: #6E7B75;">고객이 겪는 불편을 구체적인 상황으로 적어주세요</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">helper · 13 / 400</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 190px; gap: 20px; align-items: baseline; padding: 16px 0;"><span style="font-size: 12px; font-weight: 600; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">8 / 최소 10개 · 자동 저장됨</span><span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">caption · 12 / 600</span></div>
+      </div>
+      <div style="background: #F7F5F0; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px; height: fit-content;">
+        <p style="margin: 0; font-size: 15px; font-weight: 600;">조판 규칙</p>
+        <ul style="margin: 0; padding-left: 18px; color: #6E7B75; font-size: 13px; line-height: 1.9;">
+          <li>본문 최대폭 880px (약 45자)</li>
+          <li>결과 문서 본문은 개조식: ~함, ~됨</li>
+          <li>소제목은 <span style="color: #1E3932; font-weight: 600;">&#9654;</span> 로 시작</li>
+          <li>숫자·영문은 tabular 정렬</li>
+          <li>단락 간격 16px, 섹션 간격 32px</li>
+          <li>줄바꿈은 어절 단위 (keep-all)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">05</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">아이콘</h2>
+    </div>
+    <p style="margin: 8px 0 24px; max-width: 640px; color: #6E7B75;">24 그리드에서 직접 그린 선형 세트. 굵기 1.6px, 끝과 꺾임은 라운드, 채움은 강조점(눈·경고)에만. 외부 아이콘 라이브러리를 섞지 않습니다.</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;">
+      <span style="border: 1px solid #E3E0D9; border-radius: 9999px; padding: 5px 12px; font-size: 12px; color: #55625C; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">grid 24</span>
+      <span style="border: 1px solid #E3E0D9; border-radius: 9999px; padding: 5px 12px; font-size: 12px; color: #55625C; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">stroke 1.6</span>
+      <span style="border: 1px solid #E3E0D9; border-radius: 9999px; padding: 5px 12px; font-size: 12px; color: #55625C; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">cap round</span>
+      <span style="border: 1px solid #E3E0D9; border-radius: 9999px; padding: 5px 12px; font-size: 12px; color: #55625C; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">padding 2</span>
+      <span style="border: 1px solid #E3E0D9; border-radius: 9999px; padding: 5px 12px; font-size: 12px; color: #55625C; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">size 16 / 20 / 24</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M6 3h7l5 5v13H6z"></path><path d="M13 3v5h5"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">문서</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M6 3h7l5 5v13H6z"></path><path d="M13 3v5h5"></path><path d="M12 12.5v5M9.5 15h5"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">새 문서</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M4 8l8-4 8 4-8 4z"></path><path d="M4 12l8 4 8-4"></path><path d="M4 16l8 4 8-4"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">섹션</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="3.5"></circle><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"></circle></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">문제 인식</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M4 20h16"></path><path d="M7 20v-6M12 20V8M17 20v-9"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">시장 분석</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M4 16l5-5 4 3 6-7"></path><path d="M15 7h4v4"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">성장 전략</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><rect x="4" y="6" width="16" height="12" rx="3"></rect><path d="M4 10h16"></path><circle cx="16.5" cy="14" r="1" fill="currentColor" stroke="none"></circle></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">소요 예산</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><circle cx="9.5" cy="9" r="3"></circle><path d="M4 19a5.5 5.5 0 0 1 11 0"></path><path d="M16.5 7.4a3 3 0 0 1 0 5.2"></path><path d="M17.5 14.6a5.5 5.5 0 0 1 3 3.4"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">팀 구성</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><circle cx="12" cy="8.5" r="3.5"></circle><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">사용자</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><circle cx="12" cy="12" r="8"></circle><path d="M12 7.5V12l3.5 2"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">소요 시간</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><rect x="4" y="5" width="16" height="15" rx="3"></rect><path d="M4 10h16M9 3v4M15 3v4"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">공고 마감</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><rect x="4" y="4" width="16" height="12" rx="3"></rect><path d="M8 16v4.5l4.5-4.5"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">질의</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M9 7h11M9 12h11M9 17h11"></path><circle cx="5" cy="7" r="1" fill="currentColor" stroke="none"></circle><circle cx="5" cy="12" r="1" fill="currentColor" stroke="none"></circle><circle cx="5" cy="17" r="1" fill="currentColor" stroke="none"></circle></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">목록</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><rect x="3" y="8" width="18" height="8" rx="4"></rect><path d="M8.5 12l2 2 3.5-4"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">칩 선택</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M4 20l1-4L16 5l3 3L8 19z"></path><path d="M14.5 6.5l3 3"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">직접 수정</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"></path><path d="M19.5 5v4h-4"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">다시 생성</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="M8.5 12.5l2.5 2.5 4.5-5.5"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">자동 저장</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M12 4v10"></path><path d="M8 10.5l4 4 4-4"></path><path d="M5 19h14"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">DOCX 내려받기</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M12 20V10"></path><path d="M8 13.5l4-4 4 4"></path><path d="M5 5h14"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">자료 올리기</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M11 3.5l1.6 4.6 4.6 1.6-4.6 1.6L11 15.9 9.4 11.3 4.8 9.7l4.6-1.6z"></path><path d="M18 15.5l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">AI 생성</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><circle cx="12" cy="12" r="8"></circle><path d="M8.5 12.2l2.5 2.5 4.5-5.4"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">확정</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><circle cx="12" cy="12" r="8"></circle><path d="M9.6 9.8a2.5 2.5 0 1 1 3.4 2.3v1.3"></path><circle cx="12.6" cy="16.4" r="1" fill="currentColor" stroke="none"></circle></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">확인 필요</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M12 4.5l8.5 15H3.5z"></path><path d="M12 10v4"></path><circle cx="12" cy="16.8" r="1" fill="currentColor" stroke="none"></circle></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">리스크</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><circle cx="12" cy="12" r="8" opacity="0.25"></circle><path d="M12 4a8 8 0 0 1 8 8"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">진행률</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><circle cx="11" cy="11" r="6"></circle><path d="M15.5 15.5L20 20"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">검색</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><rect x="5" y="10" width="14" height="10" rx="3"></rect><path d="M8.5 10V8a3.5 3.5 0 0 1 7 0v2"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">보안</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M4 12h15"></path><path d="M14 7l5 5-5 5"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">이동</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M6 10l6 6 6-6"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">펼치기</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M12 5v14M5 12h14"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">추가</span></div>
+      <div style="border: 1px solid #E9E6DE; border-radius: 12px; padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 10px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display: block;"><path d="M6 6l12 12M18 6L6 18"></path></svg><span style="font-size: 11px; color: #6E7B75; stroke: none;">닫기</span></div>
+    </div>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">05+</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">확장 아이콘 라이브러리</h2>
+    </div>
+    <p style="margin: 8px 0 8px; max-width: 700px; color: #6E7B75;">지원사업 업무에서 실제로 필요한 8개 묶음, 84종. 같은 24 그리드·같은 굵기로 직접 그렸고 <strong style="font-weight: 600; color: #1E3932;">모두 단색</strong>입니다. 아이콘 자체에 색을 넣지 않고, 색은 배지·버튼 같은 컨테이너가 담당합니다. 이모지는 어디에도 쓰지 않습니다.</p>
+    <p style="margin: 0 0 28px; font-size: 13px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">grid 24 · stroke var(--sw) · cap round · fill = 강조점만</p>
+
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">A. 보안 · 인증 · 개인정보</p>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 32px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 3l7 3v6c0 4-3 6.6-7 8-4-1.4-7-4-7-8V6z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">보안</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 3l7 3v6c0 4-3 6.6-7 8-4-1.4-7-4-7-8V6z"></path><path d="M9.3 11.6l2.2 2.2 3.5-4.2"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">보안 통과</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 3l7 3v6c0 4-3 6.6-7 8-4-1.4-7-4-7-8V6z"></path><path d="M12 8.5v4"></path><circle cx="12" cy="15.3" r="1" fill="currentColor" stroke="none"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">보안 경고</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="5" y="10" width="14" height="10" rx="3"></rect><path d="M8.5 10V8a3.5 3.5 0 0 1 6.6-1.7"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">잠금 해제</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="8.5" cy="8.5" r="4"></circle><path d="M11.4 11.4L20 20"></path><path d="M17.2 17.2l-2 2"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">접근 권한</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 3.5c-4 0-7 3.4-7 7.5 0 3.6 1 6.5 2.5 9.5"></path><path d="M12 3.5c4 0 7 3.4 7 7.5 0 3.6-1 6.5-2.5 9.5"></path><path d="M12 7.5c-2 0-3.5 1.6-3.5 3.7 0 2.6.6 4.8 1.6 6.8"></path><path d="M12 7.5c2 0 3.5 1.6 3.5 3.7 0 2.6-.6 4.8-1.6 6.8"></path><path d="M12 11.5v5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">본인 인증</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="4" y="4" width="16" height="11" rx="2"></rect><path d="M7.5 8h9M7.5 11h5"></path><circle cx="16.5" cy="17.5" r="3"></circle><path d="M14.5 19.8L13.8 22l2.7-1 2.7 1-.7-2.2"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">인증서</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="9" r="5"></circle><path d="M9 14h6l1 4H8z"></path><path d="M4.5 21h15"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">직인 · 날인</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="9.5" cy="8" r="3.2"></circle><path d="M4 19a6 6 0 0 1 8.6-5.4"></path><path d="M18 12.2l3 1.2v2.5c0 2-1.3 3.5-3 4.3-1.7-.8-3-2.3-3-4.3v-2.5z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">개인정보</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="7" y="3" width="10" height="18" rx="3"></rect><path d="M9.8 12.2l1.7 1.7 3-3.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">2단계 인증</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M2.5 12S6 6.5 12 6.5 21.5 12 21.5 12 18 17.5 12 17.5 2.5 12 2.5 12z"></path><circle cx="12" cy="12" r="2.6"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">공개</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4.5 9.5C3.4 10.6 2.5 12 2.5 12s3.5 5.5 9.5 5.5c1.3 0 2.5-.3 3.6-.7"></path><path d="M18.6 15C20.4 13.6 21.5 12 21.5 12S18 6.5 12 6.5c-1 0-1.9.2-2.7.4"></path><path d="M5 19L19 5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">비공개</span></div>
+    </div>
+
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">B. 재무 · 자금 · 예산</p>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 32px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><ellipse cx="12" cy="6.5" rx="7" ry="3"></ellipse><path d="M5 6.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"></path><path d="M5 11.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">자금</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="3" y="7" width="18" height="10" rx="2"></rect><circle cx="12" cy="12" r="2.6"></circle><circle cx="6.5" cy="12" r=".9" fill="currentColor" stroke="none"></circle><circle cx="17.5" cy="12" r=".9" fill="currentColor" stroke="none"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">사업비</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M3 10h18"></path><path d="M6.5 14.5h4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">결제 · 카드</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="5" y="3" width="14" height="18" rx="3"></rect><path d="M8.5 7.5h7"></path><circle cx="9.5" cy="12" r=".9" fill="currentColor" stroke="none"></circle><circle cx="12" cy="12" r=".9" fill="currentColor" stroke="none"></circle><circle cx="14.5" cy="12" r=".9" fill="currentColor" stroke="none"></circle><circle cx="9.5" cy="16" r=".9" fill="currentColor" stroke="none"></circle><circle cx="12" cy="16" r=".9" fill="currentColor" stroke="none"></circle><circle cx="14.5" cy="16" r=".9" fill="currentColor" stroke="none"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">예산 산정</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="12" r="8"></circle><path d="M12 4v8h8"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">비중 · 배분</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4 8l5 5 4-3 6 7"></path><path d="M19 13v4h-4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">비용 절감</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M3.5 9.5L12 4l8.5 5.5"></path><path d="M6 10.5v8M12 10.5v8M18 10.5v8"></path><path d="M3.5 20.5h17"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">금융기관</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M6 3h12v18l-3-1.7-3 1.7-3-1.7L6 21z"></path><path d="M9 8h6M9 12h6M9 16h3"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">증빙 · 영수</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="12" r="8"></circle><path d="M8.5 13.5l3-3 2 2 3-3.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">투자 유치</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="3.5" y="5" width="17" height="14" rx="2"></rect><path d="M3.5 9.5h17M9 9.5V19"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">예산 표</span></div>
+    </div>
+
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">C. 지원사업 · 행정</p>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 32px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M3.5 20.5h17"></path><path d="M6 20.5V9l6-4 6 4v11.5"></path><path d="M10 20.5v-5h4v5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">주관 기관</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4 10v4l12 4.5V5.5z"></path><path d="M18.5 9.5a3.5 3.5 0 0 1 0 5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">공고</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="5" y="5" width="14" height="16" rx="3"></rect><path d="M9.5 3.5h5v3h-5z"></path><path d="M9.5 13l2.2 2.2 3.8-4.4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">신청서</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4 12l16-7-6.5 16-2.6-6.2z"></path><path d="M10.9 14.8L20 5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">접수 · 제출</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="11" cy="11" r="6"></circle><path d="M8.5 11l2 2 3.5-4"></path><path d="M15.5 15.5L20 20"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">심사 · 검토</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4 17c3 0 4-6 6-6s2 4 4 4 3-2.5 6-2.5"></path><path d="M4 20.5h16"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">협약 · 서명</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 6.5C10.5 5 8 4.5 4.5 4.5v12c3.5 0 6 .5 7.5 2 1.5-1.5 4-2 7.5-2v-12c-3.5 0-6 .5-7.5 2z"></path><path d="M12 6.5V18.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">사업 규정</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="14.5" r="4.5"></circle><path d="M8.5 10.5L6 3.5M15.5 10.5L18 3.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">선정 · 수상</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="9" cy="12" r="5"></circle><circle cx="15" cy="12" r="5"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">협력 · 컨소시엄</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M7 3h10"></path><path d="M7 21h10"></path><path d="M8 3v3.5l4 4 4-4V3M8 21v-3.5l4-4 4 4V21"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">결과 대기</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M6 3.5v17.5"></path><path d="M6 4.5h11l-2 3.6 2 3.6H6z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">마일스톤</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 3l7 3v6c0 4-3 6.6-7 8-4-1.4-7-4-7-8V6z"></path><path d="M9.5 10.5h5M9.5 13.5h3"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">지식재산 · 특허</span></div>
+    </div>
+
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">D. 사업 · 조직 · 성장</p>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 32px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="9.5" y="3" width="5" height="4.5" rx="1.2"></rect><rect x="3" y="16.5" width="5" height="4.5" rx="1.2"></rect><rect x="16" y="16.5" width="5" height="4.5" rx="1.2"></rect><path d="M12 7.5v4M5.5 16.5v-2.5h13v2.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">조직도</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M9 17.5h6"></path><path d="M10 20.5h4"></path><path d="M12 3a6 6 0 0 1 3.5 10.9v3.6h-7v-3.6A6 6 0 0 1 12 3z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">아이디어</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 3c3 2.6 4.5 6 4.5 9.5L12 17l-4.5-4.5C7.5 9 9 5.6 12 3z"></path><circle cx="12" cy="10" r="1.8"></circle><path d="M9 17l-2 4 3.5-1.8M15 17l2 4-3.5-1.8"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">스케일업</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="12" r="8"></circle><path d="M4 12h16"></path><path d="M12 4c2.6 2.6 2.6 13 0 16-2.6-3-2.6-13.4 0-16z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">해외 진출</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 21s6.5-6.3 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 14.7 12 21 12 21z"></path><circle cx="12" cy="10.5" r="2.5"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">거점 · 위치</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M3.5 20.5h17"></path><path d="M4 20.5v-8.5l5 3v-3l5 3V8l6 4v8.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">제조 · 생산</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4.5 9.5V20.5h15V9.5"></path><path d="M3 9.5L5 4h14l2 5.5z"></path><path d="M9.5 20.5v-5h5v5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">판로 · 유통</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 3.6c3 3 5 5.6 5 8.6a5 5 0 0 1-10 0c0-1.7.8-3.1 2-4.5.4 1.2 1.1 2 2 2.3-.6-2.3-.3-4.4 1-6.4z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">주목 · 인기</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 4l2.4 5.1 5.6.7-4.1 4 1 5.5-4.9-2.7-4.9 2.7 1-5.5-4.1-4 5.6-.7z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">핵심 · 강점</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M6 3.5h12V21l-6-4.2L6 21z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">저장 · 북마크</span></div>
+    </div>
+
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">E. 기술 · 제품</p>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 32px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M8.5 8L4.5 12l4 4"></path><path d="M15.5 8l4 4-4 4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">개발</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="3.5" y="4" width="17" height="6" rx="2"></rect><rect x="3.5" y="14" width="17" height="6" rx="2"></rect><circle cx="7.5" cy="7" r=".9" fill="currentColor" stroke="none"></circle><circle cx="7.5" cy="17" r=".9" fill="currentColor" stroke="none"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">서버 · 인프라</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M7 18.5h10a4 4 0 0 0 .4-8 5.5 5.5 0 0 0-10.6 1.6A3.4 3.4 0 0 0 7 18.5z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">클라우드</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><ellipse cx="12" cy="6" rx="7" ry="3"></ellipse><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6"></path><path d="M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">데이터</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="7" y="7" width="10" height="10" rx="2"></rect><path d="M10 3v4M14 3v4M10 17v4M14 17v4M3 10h4M3 14h4M17 10h4M17 14h4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">AI · 반도체</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M9 3.5v4.5M15 3.5v4.5"></path><path d="M6.5 8h11v3a5.5 5.5 0 0 1-11 0z"></path><path d="M12 16.5v4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">API 연동</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="7" y="3" width="10" height="18" rx="3"></rect><path d="M10.5 18h3"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">모바일</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="3" y="4" width="18" height="12" rx="2"></rect><path d="M9 20.5h6M12 16v4.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">데스크톱</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M9 3.5h6"></path><path d="M10 3.5v6l-4.6 8A2 2 0 0 0 7.2 20.5h9.6a2 2 0 0 0 1.8-3l-4.6-8v-6"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">실증 · 테스트</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M10.5 13.5l3-3"></path><path d="M8 12L6.5 13.5a3.5 3.5 0 0 0 5 5L13 17"></path><path d="M16 12l1.5-1.5a3.5 3.5 0 0 0-5-5L11 7"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">연동 링크</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4 8h9M17.5 8h2.5M4 16h3.5M12 16h8"></path><circle cx="15.5" cy="8" r="2"></circle><circle cx="10" cy="16" r="2"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">설정</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 3.5l2 3.5h-4z"></path><rect x="4.5" y="7" width="15" height="11" rx="3"></rect><circle cx="9" cy="12.5" r="1.3" fill="currentColor" stroke="none"></circle><circle cx="15" cy="12.5" r="1.3" fill="currentColor" stroke="none"></circle><path d="M8 21h8"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">자동화</span></div>
+    </div>
+
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">F. 커뮤니케이션 · 알림</p>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 32px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="3" y="5" width="18" height="14" rx="3"></rect><path d="M4 8.5l8 5 8-5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">메일</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M6 16.5V10a6 6 0 0 1 12 0v6.5l1.5 2.5h-15z"></path><path d="M10 21.5h4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">알림</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M6 3.5h3l1.5 4-2 1.5a10 10 0 0 0 6.5 6.5l1.5-2 4 1.5v3A2 2 0 0 1 18.4 20C10.9 19.3 4.7 13.1 4 5.6A2 2 0 0 1 6 3.5z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">전화 문의</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="17" cy="6" r="2.6"></circle><circle cx="6.5" cy="12" r="2.6"></circle><circle cx="17" cy="18" r="2.6"></circle><path d="M14.7 7.3L8.8 10.7M8.8 13.3l5.9 3.4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">공유</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="3.5" y="4.5" width="14" height="11" rx="3"></rect><path d="M7.5 15.5v4l4.5-4"></path><path d="M20.5 9v8.5a3 3 0 0 1-3 3h-2"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">상담 · 피드백</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="12" r="8"></circle><path d="M12 11.5v5"></path><circle cx="12" cy="8.3" r="1" fill="currentColor" stroke="none"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">안내</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M14 3.5h6v6"></path><path d="M20 3.5l-8.5 8.5"></path><path d="M18 14v4.5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-10a2 2 0 0 1 2-2h4.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">외부 링크</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 1.5"></path><path d="M4.5 8.5L4 4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">변경 이력</span></div>
+    </div>
+
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">G. 파일 · 문서 작업</p>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-bottom: 32px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M3.5 7.5a2 2 0 0 1 2-2h3.7l2 2.5h7.3a2 2 0 0 1 2 2v7.5a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">폴더</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M18 10.5l-7 7a3 3 0 0 1-4.2-4.2l7.8-7.8a4 4 0 0 1 5.7 5.7l-8 8"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">첨부</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M7 8V4h10v4"></path><rect x="4" y="8" width="16" height="7" rx="2"></rect><path d="M7 13h10v7.5H7z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">인쇄</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="8" y="8" width="12" height="12" rx="3"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">복제</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4.5 7h15"></path><path d="M9 7V4.5h6V7"></path><path d="M6.5 7l1 13.5h9L17.5 7"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">삭제</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4 5h16l-6 7v7.5l-4-2.2V12z"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">필터</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M7 4.5v15"></path><path d="M4 8l3-3.5L10 8"></path><path d="M17 19.5v-15"></path><path d="M14 16l3 3.5 3-3.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">정렬</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M11 4H4.5v6.5L14 20l6-6z"></path><circle cx="8" cy="8" r="1.3" fill="currentColor" stroke="none"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">태그</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M6 3h7l5 5v13H6z"></path><path d="M13 3v5h5"></path><path d="M9 13h6M9 16.5h4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">DOCX</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M6 3h7l5 5v13H6z"></path><path d="M13 3v5h5"></path><path d="M9.5 12.5l2 2 3-3.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">검수 완료</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 15.5V4"></path><path d="M8 7.5l4-3.5 4 3.5"></path><path d="M4.5 15v3.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V15"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">클라우드 저장</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="4" y="4" width="7" height="7" rx="1.5"></rect><rect x="13" y="4" width="7" height="7" rx="1.5"></rect><rect x="4" y="13" width="7" height="7" rx="1.5"></rect><rect x="13" y="13" width="7" height="7" rx="1.5"></rect></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">양식 모음</span></div>
+    </div>
+
+    <p style="margin: 0 0 12px; font-size: 13px; font-weight: 600; color: #A2ADA8; letter-spacing: 0.04em; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">H. 상태 · 시스템</p>
+    <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; color: #1E3932; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="12" r="8"></circle><path d="M6.5 17.5l11-11"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">차단 · 반려</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="12" r="8"></circle><path d="M10 9.5v5M14 9.5v5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">일시 중지</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><circle cx="12" cy="12" r="8"></circle><rect x="9.5" y="9.5" width="5" height="5" rx="1"></rect></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">생성 중단</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M4 12a8 8 0 1 1 8 8" opacity="0.3"></path><path d="M12 4a8 8 0 0 1 8 8"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">처리 중</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M19.5 10.5A7.5 7.5 0 0 0 6.3 7.3"></path><path d="M19.5 6.5v4h-4"></path><path d="M4.5 13.5a7.5 7.5 0 0 0 13.2 3.2"></path><path d="M4.5 17.5v-4h4"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">동기화</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><rect x="3.5" y="6" width="17" height="12" rx="3"></rect><path d="M7 12h10"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">비활성</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M12 3.5l8.5 15h-17z"></path><path d="M12 9.5v4"></path><circle cx="12" cy="16.3" r="1" fill="currentColor" stroke="none"></circle></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">주의</span></div>
+      <div style="border:1px solid #E9E6DE;border-radius:12px;padding:16px 6px;display:flex;flex-direction:column;align-items:center;gap:9px;"><svg viewBox="0 0 24 24" width="24" height="24" style="display:block;"><path d="M20 6.5L9.5 17 4 11.5"></path></svg><span style="font-size:11px;color:#6E7B75;stroke:none;text-align:center;">완료</span></div>
+    </div>
+
+    <div style="margin-top: 28px; background: #F7F5F0; border-radius: 12px; padding: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font-size: 14px; font-weight: 600;">단색 원칙</span><span style="font-size: 13px; line-height: 1.8; color: #6E7B75;">아이콘에 색을 칠하지 않습니다. 의미가 급할 때는 아이콘을 감싼 배지에 상태 색을 씁니다.</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font-size: 14px; font-weight: 600;">크기 규칙</span><span style="font-size: 13px; line-height: 1.8; color: #6E7B75;">배지 안 14 · 본문 16 · 목록 18 · 카드 24. 그 사이 값은 쓰지 않습니다.</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px;"><span style="font-size: 14px; font-weight: 600;">확장 방법</span><span style="font-size: 13px; line-height: 1.8; color: #6E7B75;">새 아이콘은 기존 도형을 조합해 만듭니다. 방패·문서·원 세 가지가 대부분을 덮습니다.</span></div>
+    </div>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">06</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">시그니처 · 확신도 배지</h2>
+    </div>
+    <p style="margin: 8px 0 32px; max-width: 640px; color: #6E7B75;">포인트 컬러가 그린이므로 <strong style="font-weight: 600; color: #1E3932;">확정</strong> 배지는 채도를 낮춘 그린 틴트만 사용하고 솔리드 그린은 버튼에만 남깁니다. 제품의 약속을 시각화한 유일한 컴포넌트. 섹션 헤더 우측에 배지, 후속 조치가 필요하면 섹션 하단에 안내 박스를 둡니다. 배지는 눈에 띄되 본문 조판을 흔들지 않습니다.</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
+        <span style="display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; background: #EAF4EE; color: #00704A; border-radius: 9999px; padding: 5px 11px 5px 9px; font-size: 12px; font-weight: 600;"><svg viewBox="0 0 24 24" width="14" height="14" style="display: block;"><circle cx="12" cy="12" r="8"></circle><path d="M8.5 12.2l2.5 2.5 4.5-5.4"></path></svg>확정</span>
+        <span style="font-size: 13px; color: #6E7B75; stroke: none; line-height: 1.7;">응답에 근거가 있는 내용. 기본값이며 별도 조치 없음.</span>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
+        <span style="display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; background: #FFFBEB; color: #B45309; border-radius: 9999px; padding: 5px 11px 5px 9px; font-size: 12px; font-weight: 600;"><svg viewBox="0 0 24 24" width="14" height="14" style="display: block;"><circle cx="12" cy="12" r="8"></circle><path d="M9.6 9.8a2.5 2.5 0 1 1 3.4 2.3v1.3"></path><circle cx="12.6" cy="16.4" r="1" fill="currentColor" stroke="none"></circle></svg>확인 필요 3</span>
+        <span style="font-size: 13px; color: #6E7B75; stroke: none; line-height: 1.7;">근거가 부족해 사용자에게 되물어야 하는 항목. 개수를 함께 표기.</span>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 12px;">
+        <span style="display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; background: #FEF2F2; color: #B91C1C; border-radius: 9999px; padding: 5px 11px 5px 9px; font-size: 12px; font-weight: 600;"><svg viewBox="0 0 24 24" width="14" height="14" style="display: block;"><path d="M12 4.5l8.5 15H3.5z"></path><path d="M12 10v4"></path><circle cx="12" cy="16.8" r="1" fill="currentColor" stroke="none"></circle></svg>리스크</span>
+        <span style="font-size: 13px; color: #6E7B75; stroke: none; line-height: 1.7;">지원 자격·요건에 문제 소지가 있는 내용. 제출 전 반드시 검토.</span>
+      </div>
+    </div>
+
+    <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 28px; max-width: 880px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid #E9E6DE;">
+        <h3 style="margin: 0; font-size: 17px; font-weight: 600; letter-spacing: -0.02em;">2. 문제 인식 (Problem)</h3>
+        <span style="display: inline-flex; align-items: center; gap: 6px; background: #FFFBEB; color: #B45309; border-radius: 9999px; padding: 5px 11px 5px 9px; font-size: 12px; font-weight: 600; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round;"><svg viewBox="0 0 24 24" width="14" height="14" style="display: block;"><circle cx="12" cy="12" r="8"></circle><path d="M9.6 9.8a2.5 2.5 0 1 1 3.4 2.3v1.3"></path><circle cx="12.6" cy="16.4" r="1" fill="currentColor" stroke="none"></circle></svg>확인 필요 2</span>
+      </div>
+      <p style="margin: 20px 0 8px; font-size: 15px; font-weight: 600;">&#9654; 문제 정의</p>
+      <p style="margin: 0 0 16px; font-size: 15px; line-height: 1.7; color: #1E3932;">예비창업자 대부분이 정부지원사업 표준 양식의 서술 방식을 숙지하지 못한 상태로 마감을 맞이함. 이로 인해 아이템의 실체와 무관하게 서류 단계에서 탈락하는 사례가 반복됨.</p>
+      <p style="margin: 0 0 8px; font-size: 15px; font-weight: 600;">&#9654; 시장 규모</p>
+      <p style="margin: 0; font-size: 15px; line-height: 1.7; color: #1E3932;">연간 예비창업패키지 지원 대상 규모를 기준으로 잠재 사용자를 산정함. 구체 수치는 사용자 확인 후 확정 필요.</p>
+      <div style="margin-top: 24px; background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 12px; padding: 20px;">
+        <p style="margin: 0 0 12px; font-size: 14px; font-weight: 600; color: #B45309;">아래 항목은 직접 확인해 주세요</p>
+        <ul style="margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.9; color: #92400E;">
+          <li>목표 시장 규모의 출처가 되는 통계 자료가 있나요?</li>
+          <li>경쟁 서비스 대비 가격 정책이 정해졌나요?</li>
+        </ul>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #E9E6DE; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+        <button style="display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border: 1px solid #E3E0D9; background: #FFFFFF; border-radius: 8px; font-size: 13px; font-weight: 600; color: #1E3932; font-family: inherit; cursor: pointer;"><svg viewBox="0 0 24 24" width="15" height="15" style="display: block;"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"></path><path d="M19.5 5v4h-4"></path></svg>다시 생성</button>
+        <button style="display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border: 1px solid #E3E0D9; background: #FFFFFF; border-radius: 8px; font-size: 13px; font-weight: 600; color: #1E3932; font-family: inherit; cursor: pointer;"><svg viewBox="0 0 24 24" width="15" height="15" style="display: block;"><path d="M4 20l1-4L16 5l3 3L8 19z"></path><path d="M14.5 6.5l3 3"></path></svg>직접 수정</button>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">07</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">UI 컴포넌트</h2>
+    </div>
+    <p style="margin: 8px 0 32px; max-width: 640px; color: #6E7B75;">버튼 높이 48 / 40 / 36, 입력 라운드 8, 카드 라운드 12. 포커스는 accent 보더 + 3px accent-100 링으로 통일합니다.</p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">BUTTON</p>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+          <button style="height: 48px; padding: 0 22px; border: none; background: var(--accent, #00704A); color: #FFFFFF; border-radius: 8px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer;">사업계획서 생성하기</button>
+          <button style="height: 48px; padding: 0 22px; border: 1px solid #E3E0D9; background: #FFFFFF; color: #1E3932; border-radius: 8px; font-size: 15px; font-weight: 600; font-family: inherit; cursor: pointer;">임시 저장</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px;">
+          <button style="height: 40px; padding: 0 16px; border: none; background: #EFEDE6; color: #A2ADA8; border-radius: 8px; font-size: 14px; font-weight: 600; font-family: inherit;">생성하기 (비활성)</button>
+          <button style="height: 40px; padding: 0 12px; border: none; background: transparent; color: var(--accent, #00704A); border-radius: 8px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer;">양식 안내 보기</button>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #6E7B75;">주요 버튼은 화면당 1개. 생성 버튼은 전체 폭으로 두고, 조건 미달이면 비활성 + 이유를 함께 표기합니다.</p>
+      </div>
+
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">FIELD</p>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <span style="font-size: 14px; font-weight: 600;">1. 어떤 문제를 해결하려고 하나요? <span style="color: var(--accent, #00704A);">*</span></span>
+          <span style="font-size: 13px; color: #6E7B75;">고객이 겪는 불편을 구체적인 상황으로 적어주세요</span>
+          <div style="border: 1px solid var(--accent, #00704A); border-radius: 8px; box-shadow: 0 0 0 3px #CFE4D8; padding: 12px 14px; font-size: 15px; line-height: 1.7; min-height: 76px; color: #1E3932;">마감 1주일 전에 사업계획서를 처음 열어보고, 어떤 문장으로 써야 하는지 몰라 그대로 포기함</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 2px;">
+            <span style="display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: #00704A; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;"><svg viewBox="0 0 24 24" width="13" height="13" style="display: block;"><circle cx="12" cy="12" r="8"></circle><path d="M8.5 12.2l2.5 2.5 4.5-5.4"></path></svg>저장됨</span>
+            <span style="font-size: 12px; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">124 / 600</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <span style="border: 1px solid var(--accent, #00704A); background: #EAF4EE; color: var(--accent, #00704A); border-radius: 9999px; padding: 7px 14px; font-size: 13px; font-weight: 600;">프로토타입</span>
+          <span style="border: 1px solid #E3E0D9; color: #55625C; border-radius: 9999px; padding: 7px 14px; font-size: 13px;">아이디어</span>
+          <span style="border: 1px solid #E3E0D9; color: #55625C; border-radius: 9999px; padding: 7px 14px; font-size: 13px;">MVP 출시</span>
+          <span style="border: 1px solid #E3E0D9; color: #55625C; border-radius: 9999px; padding: 7px 14px; font-size: 13px;">매출 발생</span>
+        </div>
+      </div>
+
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">PROGRESS</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; align-items: baseline; justify-content: space-between;">
+            <span style="font-size: 14px; font-weight: 600;">8 / 최소 10개</span>
+            <span style="font-size: 13px; color: #6E7B75;">2개 더 답변하면 생성할 수 있어요</span>
+          </div>
+          <div style="height: 6px; border-radius: 9999px; background: #E9E6DE; overflow: hidden;"><div style="width: 80%; height: 100%; background: var(--accent, #00704A); border-radius: 9999px;"></div></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 4px; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #6E7B75;"><span style="display: inline-flex; color: #00704A;"><svg viewBox="0 0 24 24" width="18" height="18" style="display: block;"><circle cx="12" cy="12" r="8"></circle><path d="M8.5 12.2l2.5 2.5 4.5-5.4"></path></svg></span>1. 사업 개요</div>
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: #1E3932;"><span style="display: inline-flex; color: var(--accent, #00704A);"><svg viewBox="0 0 24 24" width="18" height="18" style="display: block;"><circle cx="12" cy="12" r="8" opacity="0.25"></circle><path d="M12 4a8 8 0 0 1 8 8"></path></svg></span>2. 문제 인식 &mdash; 작성 중</div>
+          <div style="display: flex; align-items: center; gap: 10px; font-size: 14px; color: #A2ADA8;"><span style="display: inline-flex; color: #E3E0D9;"><svg viewBox="0 0 24 24" width="18" height="18" style="display: block;"><circle cx="12" cy="12" r="8"></circle></svg></span>3. 실현 가능성</div>
+        </div>
+      </div>
+
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">STATUS &amp; LIST ITEM</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <span style="background: #EFEDE6; color: #6E7B75; border-radius: 9999px; padding: 5px 11px; font-size: 12px; font-weight: 600;">작성 전</span>
+          <span style="background: #EAF4EE; color: var(--accent, #00704A); border-radius: 9999px; padding: 5px 11px; font-size: 12px; font-weight: 600;">질의 응답 중</span>
+          <span style="display: inline-flex; align-items: center; gap: 6px; background: #CFE4D8; color: #005E3F; border-radius: 9999px; padding: 5px 11px; font-size: 12px; font-weight: 600;"><span style="width: 6px; height: 6px; border-radius: 9999px; background: #005E3F; display: block;"></span>생성 중</span>
+          <span style="background: var(--accent, #00704A); color: #FFFFFF; border-radius: 9999px; padding: 5px 11px; font-size: 12px; font-weight: 600;">완료</span>
+        </div>
+        <p style="margin: -6px 0 0; font-size: 13px; color: #6E7B75;">그린 한 계열 안에서 명도 단계로 구분: 틴트 50 &rarr; 틴트 100 &rarr; 솔리드. 확정 배지는 문서 안에서만 가장 옅은 틴트를 씁니다.</p>
+        <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+          <div style="display: flex; flex-direction: column; gap: 4px; min-width: 0;">
+            <span style="font-size: 15px; font-weight: 600;">중소기업 세무 자동화 SaaS</span>
+            <span style="font-size: 13px; color: #6E7B75;">K-Startup PSST · 응답 8/12</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: var(--sw, 1.6px); stroke-linecap: round; stroke-linejoin: round;">
+            <span style="background: #EAF4EE; color: var(--accent, #00704A); border-radius: 9999px; padding: 5px 11px; font-size: 12px; font-weight: 600; white-space: nowrap;">질의 응답 중</span>
+            <span style="display: inline-flex; color: #A2ADA8;"><svg viewBox="0 0 24 24" width="18" height="18" style="display: block;"><path d="M4 12h15"></path><path d="M14 7l5 5-5 5"></path></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">08</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">레이아웃 · 토큰</h2>
+    </div>
+    <p style="margin: 8px 0 32px; max-width: 640px; color: #6E7B75;">여백은 4의 배수만 사용합니다. 그림자는 떠 있어야 하는 요소(모달·드롭다운)에만 최소한으로.</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">RADIUS</p>
+        <div style="display: flex; align-items: flex-end; gap: 12px;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><div style="width: 52px; height: 52px; background: #F7F5F0; border: 1px solid #E3E0D9; border-radius: 8px;"></div><span style="font-size: 11px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">8 input</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><div style="width: 52px; height: 52px; background: #F7F5F0; border: 1px solid #E3E0D9; border-radius: 12px;"></div><span style="font-size: 11px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">12 card</span></div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><div style="width: 52px; height: 26px; background: #F7F5F0; border: 1px solid #E3E0D9; border-radius: 9999px;"></div><span style="font-size: 11px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">pill</span></div>
+        </div>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">SPACING</p>
+        <div style="display: flex; align-items: flex-end; gap: 6px; height: 64px;">
+          <div style="width: 16px; height: 4px; background: var(--accent, #00704A); opacity: 0.25;"></div>
+          <div style="width: 16px; height: 8px; background: var(--accent, #00704A); opacity: 0.35;"></div>
+          <div style="width: 16px; height: 12px; background: var(--accent, #00704A); opacity: 0.45;"></div>
+          <div style="width: 16px; height: 16px; background: var(--accent, #00704A); opacity: 0.55;"></div>
+          <div style="width: 16px; height: 20px; background: var(--accent, #00704A); opacity: 0.65;"></div>
+          <div style="width: 16px; height: 24px; background: var(--accent, #00704A); opacity: 0.75;"></div>
+          <div style="width: 16px; height: 32px; background: var(--accent, #00704A); opacity: 0.85;"></div>
+          <div style="width: 16px; height: 48px; background: var(--accent, #00704A); opacity: 0.92;"></div>
+          <div style="width: 16px; height: 64px; background: var(--accent, #00704A);"></div>
+        </div>
+        <span style="font-size: 12px; color: #6E7B75; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">4 · 8 · 12 · 16 · 20 · 24 · 32 · 48 · 64</span>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 22px; display: flex; flex-direction: column; gap: 14px;">
+        <p style="margin: 0; font-size: 13px; font-weight: 600; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">ELEVATION &amp; MOTION</p>
+        <div style="display: flex; gap: 12px;">
+          <div style="width: 72px; height: 52px; background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 12px;"></div>
+          <div style="width: 72px; height: 52px; background: #FFFFFF; border: 1px solid #E9E6DE; border-radius: 12px; box-shadow: 0 4px 16px rgba(30, 57, 50, 0.09);"></div>
+        </div>
+        <span style="font-size: 12px; color: #6E7B75; line-height: 1.7;">기본 = 1px 보더 / 떠 있는 요소 = 0 4px 16px 6%<br />전환 140ms ease-out, 이동 거리 4px 이하</span>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px;">
+        <p style="margin: 0 0 12px; font-size: 15px; font-weight: 600;">그리드</p>
+        <div style="display: flex; gap: 4px; height: 60px; margin-bottom: 12px;">
+          <div style="flex: 1; background: #EFEDE6; border-radius: 4px;"></div>
+          <div style="flex: 4; background: #EAF4EE; border-radius: 4px;"></div>
+          <div style="flex: 1; background: #EFEDE6; border-radius: 4px;"></div>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #6E7B75;">본문 최대폭 880px 중앙 정렬. 데스크톱 결과 화면에서만 우측 240px 목차 사이드바를 추가. 모바일은 좌우 20px 여백 단일 컬럼.</p>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px;">
+        <p style="margin: 0 0 12px; font-size: 15px; font-weight: 600;">접근성</p>
+        <ul style="margin: 0; padding-left: 18px; color: #6E7B75; font-size: 13px; line-height: 1.9;">
+          <li>본문 대비 4.5:1 이상 &mdash; #6E7B75이 최저선</li>
+          <li>상태는 색만으로 전달하지 않음 (배지에 항상 텍스트)</li>
+          <li>모바일 탭 영역 최소 44px</li>
+          <li>포커스 링을 제거하지 않음</li>
+        </ul>
+      </div>
+    </div>
+    <sc-if value="{{ showTokens }}" hint-placeholder-val="{{ true }}">
+      <div style="margin-top: 16px; background: #F7F5F0; border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px; overflow: auto;">
+        <p style="margin: 0 0 14px; font-size: 13px; font-weight: 600; color: #A2ADA8; font-family: ui-monospace, 'SF Mono', Menlo, monospace;">CSS TOKENS &mdash; 개발 연결용</p>
+        <pre style="margin: 0; font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px; line-height: 1.9; color: #1E3932;">--bg: #FFFFFF;          --surface: #F7F5F0;       --border: #E3E0D9;
+--text: #1E3932;        --text-muted: #6E7B75;    --text-subtle: #A2ADA8;
+--accent: #00704A;      --accent-50: #EAF4EE;     --accent-100: #CFE4D8;
+
+--confirmed-bg: #EAF4EE;   --confirmed-fg: #00704A;
+--needs-user-bg: #FFFBEB;  --needs-user-fg: #B45309;
+--risk-bg: #FEF2F2;        --risk-fg: #B91C1C;
+
+--r-input: 8px;   --r-card: 12px;   --r-pill: 9999px;
+--font: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
+--content-max: 880px;   --icon-stroke: 1.6px;   --motion: 140ms ease-out;</pre>
+      </div>
+    </sc-if>
+  </section>
+
+  <section style="background: #FFFFFF; border: 1px solid #E3E0D9; border-radius: 20px; padding: 40px;">
+    <div style="display: flex; align-items: baseline; gap: 12px;">
+      <span style="font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12px; color: #A2ADA8;">09</span>
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em;">보이스 &amp; 금지 사항</h2>
+    </div>
+    <p style="margin: 8px 0 32px; max-width: 640px; color: #6E7B75;">사용자에게 말할 때는 해요체로 짧게, 결과 문서 본문은 개조식으로. 재촉하지 않고 다음 한 걸음만 알려줍니다.</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; overflow: hidden;">
+        <div style="background: #EAF4EE; padding: 14px 20px; font-size: 13px; font-weight: 600; color: #00704A;">이렇게 씁니다</div>
+        <ul style="margin: 0; padding: 18px 20px 20px 38px; font-size: 14px; line-height: 2; color: #1E3932;">
+          <li>2개 더 답변하면 생성할 수 있어요</li>
+          <li>자동으로 저장됐어요</li>
+          <li>이 부분은 근거가 부족해요. 직접 확인해 주세요</li>
+          <li>초안이라 그대로 제출하기보다 한 번 읽어보세요</li>
+        </ul>
+      </div>
+      <div style="border: 1px solid #E3E0D9; border-radius: 12px; overflow: hidden;">
+        <div style="background: #FEF2F2; padding: 14px 20px; font-size: 13px; font-weight: 600; color: #B91C1C;">이렇게 쓰지 않습니다</div>
+        <ul style="margin: 0; padding: 18px 20px 20px 38px; font-size: 14px; line-height: 2; color: #6E7B75;">
+          <li>필수 항목 미입력 (오류 통보식 문장)</li>
+          <li>완벽한 사업계획서가 완성되었습니다! (과장)</li>
+          <li>AI가 마법처럼 써드려요 (근거 없는 약속)</li>
+          <li>지금 바로 서두르세요 (재촉)</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top: 16px; border: 1px solid #E3E0D9; border-radius: 12px; padding: 24px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+      <div style="display: flex; flex-direction: column; gap: 8px;"><span style="font-size: 14px; font-weight: 600;">쓰지 않는 것</span><span style="font-size: 13px; line-height: 1.8; color: #6E7B75;">히어로 일러스트 · 3D 오브젝트 · 보라색 AI 그라데이션 · 글래스모피즘</span></div>
+      <div style="display: flex; flex-direction: column; gap: 8px;"><span style="font-size: 14px; font-weight: 600;">색 규칙</span><span style="font-size: 13px; line-height: 1.8; color: #6E7B75;">카드마다 다른 색 금지. 색은 상태와 다음 행동에만. 다크 모드는 1차 범위 밖</span></div>
+      <div style="display: flex; flex-direction: column; gap: 8px;"><span style="font-size: 14px; font-weight: 600;">이모지</span><span style="font-size: 13px; line-height: 1.8; color: #6E7B75;">UI·문서·알림 전체에서 사용하지 않음. 의미 전달은 항상 자체 선형 아이콘으로</span></div>
+    </div>
+  </section>
+
+</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;accent&quot;: {&quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#00704A&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#00704A&quot;, &quot;#005E3F&quot;, &quot;#1E3932&quot;, &quot;#00A862&quot;], &quot;section&quot;: &quot;브랜드&quot;},
+  &quot;pageTone&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;웜&quot;, &quot;options&quot;: [&quot;뉴트럴&quot;, &quot;웜&quot;, &quot;쿨&quot;, &quot;화이트&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;브랜드&quot;},
+  &quot;iconStroke&quot;: {&quot;editor&quot;: &quot;range&quot;, &quot;default&quot;: 1.6, &quot;min&quot;: 1.2, &quot;max&quot;: 2.2, &quot;step&quot;: 0.1, &quot;unit&quot;: &quot;px&quot;, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;아이콘&quot;},
+  &quot;showTokens&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;문서&quot;}
+}">
+class Component extends DCLogic {
+  renderVals() {
+    const p = this.props;
+    const tones = { "뉴트럴": "#F7F7F5", "웜": "#F7F5F0", "쿨": "#F1F6F3", "화이트": "#FFFFFF" };
+    return {
+      accent: p.accent ?? "#00704A",
+      pageTone: tones[p.pageTone] ?? "#F7F5F0",
+      sw: (p.iconStroke ?? 1.6) + "px",
+      showTokens: p.showTokens ?? true
+    };
+  }
+}
+</script>
+</body>
+</html>

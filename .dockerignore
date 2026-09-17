@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+.git
+*.log
+.env
+.env.*
+!.env.example
+workspace
+out.md
+.claude

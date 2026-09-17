@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "정부·공공 지원사업 공고 (grants)",
+  "description": "K-Startup 공공 Open API 를 수집·정규화하여 적재한 공고 데이터. MoAI(모아이) / (주)디레브",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "내부 식별자 (UUID)"
+    },
+    "createdAt": {
+      "type": "string (ISO 8601 date-time)",
+      "description": "적재 시각"
+    },
+    "updatedAt": {
+      "type": "string (ISO 8601 date-time)",
+      "description": "최종 갱신 시각"
+    },
+    "title": {
+      "type": "string",
+      "description": "공고명"
+    },
+    "agency": {
+      "type": "string",
+      "description": "주관/시행 기관"
+    },
+    "agencyType": {
+      "type": "string",
+      "description": "기관 구분 (central 중앙 / local 지자체 / public 공공)"
+    },
+    "category": {
+      "type": "string",
+      "description": "공고 유형 (fund 자금 / rnd 기술개발 / contest 경진·행사 / edu 교육 / etc 기타)"
+    },
+    "summary": {
+      "type": "null",
+      "description": "공고 요약"
+    },
+    "applyStartAt": {
+      "type": "string (ISO 8601 date-time)",
+      "description": "접수 시작"
+    },
+    "applyEndAt": {
+      "type": "string (ISO 8601 date-time)",
+      "description": "접수 마감"
+    },
+    "amountMin": {
+      "type": "null",
+      "description": "지원금 하한 (원)"
+    },
+    "amountMax": {
+      "type": "null",
+      "description": "지원금 상한 (원)"
+    },
+    "applicantTypes": {
+      "type": "array",
+      "description": "지원 대상 구분 배열 (preliminary 예비창업 / startup 창업기업 / sme 중소기업 …)"
+    },
+    "recurrence": {
+      "type": "string",
+      "description": "반복 여부 (once 단발 / yearly 연례)"
+    },
+    "targetRegions": {
+      "type": "array",
+      "description": "대상 지역 배열"
+    },
+    "targetIndustries": {
+      "type": "array",
+      "description": "대상 업종 배열"
+    },
+    "minBusinessYears": {
+      "type": "null",
+      "description": "업력 하한 (년)"
+    },
+    "maxBusinessYears": {
+      "type": "number",
+      "description": "업력 상한 (년)"
+    },
+    "maxEmployees": {
+      "type": "null",
+      "description": "종업원 수 상한"
+    },
+    "maxRevenue": {
+      "type": "null",
+      "description": "연매출 상한 (원)"
+    },
+    "requiredCertifications": {
+      "type": "array",
+      "description": "요구 인증 배열"
+    },
+    "applyTargetDetail": {
+      "type": "null",
+      "description": "지원 자격 원문"
+    },
+    "excludeTarget": {
+      "type": "null",
+      "description": "제외 대상 원문"
+    },
+    "minAge": {
+      "type": "null",
+      "description": "대표자 연령 하한"
+    },
+    "maxAge": {
+      "type": "null",
+      "description": "대표자 연령 상한"
+    },
+    "corporationOnly": {
+      "type": "null",
+      "description": "법인 한정 여부"
+    },
+    "sourceUrl": {
+      "type": "string",
+      "description": "공고 원문 URL"
+    },
+    "sourceApi": {
+      "type": "string",
+      "description": "수집 출처 (kstartup)"
+    },
+    "externalId": {
+      "type": "string",
+      "description": "원본 시스템의 공고 번호"
+    },
+    "rawMetadata": {
+      "type": "object",
+      "description": "정규화 전 원문 값 보관 (역추적용)"
+    },
+    "isActive": {
+      "type": "boolean",
+      "description": "접수 진행 여부"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "agency",
+    "sourceApi"
+  ]
+}
