@@ -10,8 +10,9 @@ import {
   CalendarQueryDto, ExplainQueryDto, RelatedQueryDto, UpcomingQueryDto,
 } from './dto/calendar-query.dto';
 import {
-  PendingQueryDto, SoftResultDto, SweepDto,
+  DocumentResultDto, PendingQueryDto, SoftResultDto, SweepDto,
 } from './dto/eligibility.dto';
+import { GrantDocumentsService } from './grant-documents.service';
 import { CreateGrantDto } from './dto/create-grant.dto';
 import { UpdateGrantDto } from './dto/update-grant.dto';
 import { Grant } from './entities/grant.entity';
@@ -24,6 +25,7 @@ export class GrantsController {
     private readonly service: GrantsService,
     private readonly calendar: CalendarService,
     private readonly cache: EligibilityCacheService,
+    private readonly documents: GrantDocumentsService,
   ) {}
 
   /* ────────────── 캘린더 ────────────── */
@@ -87,6 +89,19 @@ export class GrantsController {
     });
   }
 
+  /**
+   * 내 정보에서 먼저 채우면 좋은 칸 — 막고 있는 공고 수 순.
+   *
+   *   GET /api/grants/eligibility/unlock?tenantId=...
+   *
+   * `:id/eligibility` 보다 **위에** 둔다. 아래에 두면 `eligibility` 가
+   * 공고 id 자리로 읽혀 UUID 검사에서 400 이 난다.
+   */
+  @Get('eligibility/unlock')
+  unlock(@Query() query: ExplainQueryDto) {
+    return this.calendar.unlockHints(query);
+  }
+
   /** 마감 임박 공고 (기본 14일) */
   @Get('calendar/upcoming')
   upcoming(@Query() query: UpcomingQueryDto) {
@@ -146,6 +161,14 @@ export class GrantsController {
         foundedAt: profile.foundedAt,
         employees: profile.employees,
         certifications: profile.certifications,
+        regionDetail: profile.regionDetail,
+        founderBirthYear: profile.founderBirthYear,
+        annualRevenue: profile.annualRevenue,
+        founderTraits: profile.founderTraits,
+        isSmallBusiness: profile.isSmallBusiness,
+        exportStatus: profile.exportStatus,
+        hasIp: profile.hasIp,
+        pastPrograms: profile.pastPrograms,
       },
       hardReasons: check.hardReasons,
     }));
@@ -166,6 +189,36 @@ export class GrantsController {
       model: dto.model,
     });
     return { ok: true };
+  }
+
+  /* ────────────── 공고문 읽기 ────────────── */
+
+  /** 읽을 공고문 대기열 — 로컬 에이전트가 가져간다 */
+  @Internal()
+  @Get('documents/pending')
+  documentsPending(@Query() query: PendingQueryDto) {
+    return this.documents.pending(query.limit ?? 10);
+  }
+
+  /** 공고문 읽기 결과 수신 */
+  @Internal()
+  @Post('documents/:grantId/result')
+  @HttpCode(200)
+  documentResult(
+    @Param('grantId', ParseUUIDPipe) grantId: string,
+    @Body() dto: DocumentResultDto,
+  ) {
+    return this.documents.saveResult(grantId, {
+      ...dto,
+      conditions: dto.conditions as never,
+    });
+  }
+
+  /** 진행 현황 */
+  @Internal()
+  @Get('documents/stats')
+  documentStats() {
+    return this.documents.stats();
   }
 
   /** 테넌트 판정 요약 */

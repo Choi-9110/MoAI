@@ -1,3 +1,5 @@
+import { EXPORT_STATUS_LABELS, FOUNDER_TRAIT_LABELS } from './target-traits';
+import type { ExportStatus } from './target-traits';
 import { z } from 'zod';
 
 /**
@@ -43,6 +45,18 @@ export interface JudgeInput {
     foundedAt: string | null;
     employees: number | null;
     certifications: string[];
+    /*
+     * 아래는 나중에 더한 항목이라 선택이다 — 배포 순서에 따라 api 와
+     * agent 버전이 잠깐 어긋나도 판정이 멈추지 않게 한다.
+     */
+    regionDetail?: string | null;
+    founderBirthYear?: number | null;
+    annualRevenue?: string | number | null;
+    founderTraits?: string[];
+    isSmallBusiness?: boolean | null;
+    exportStatus?: string | null;
+    hasIp?: boolean | null;
+    pastPrograms?: string[];
   };
   /** 코드가 이미 확정한 항목 — 다시 판정하면 중복이다 */
   hardReasons: { field: string; verdict: string; message: string }[];
@@ -77,6 +91,34 @@ export const JUDGE_SYSTEM_PROMPT = `당신은 정부지원사업 신청 자격�
 7. message 는 한 문장으로 짧게 쓰세요.`;
 
 /** 공고 1건에 대한 판정 요청문 */
+/**
+ * 뒤에 더한 신청자 정보를 줄로 만든다.
+ *
+ * **모르는 것은 "미등록"이라고 적는다.** 줄을 빼 버리면 모델은 "해당 없음"과
+ * "안 물어봤다"를 가르지 못해, 여성기업 전용 공고를 멋대로 통과시킨다.
+ */
+function profileExtras(p: JudgeInput['profile']): string {
+  const list = (v: string[] | undefined, labels: Record<string, string> = {}) =>
+    !v || v.length === 0
+      ? '미등록'
+      : v.includes('none')
+        ? '해당 없음'
+        : v.map((x) => labels[x] ?? x).join(', ');
+  const yesNo = (v: boolean | null | undefined) =>
+    v == null ? '미등록' : v ? '예' : '아니오';
+
+  return [
+    `- 시·군·구: ${p.regionDetail ?? '미등록'}`,
+    `- 대표자 출생연도: ${p.founderBirthYear ?? '미등록'}`,
+    `- 연 매출액(원): ${p.annualRevenue ?? '미등록'}`,
+    `- 대표자 특성: ${list(p.founderTraits, FOUNDER_TRAIT_LABELS)}`,
+    `- 소상공인: ${yesNo(p.isSmallBusiness)}`,
+    `- 수출: ${p.exportStatus ? (EXPORT_STATUS_LABELS[p.exportStatus as ExportStatus] ?? p.exportStatus) : '미등록'}`,
+    `- 지식재산 보유: ${yesNo(p.hasIp)}`,
+    `- 선정된 정부 사업: ${list(p.pastPrograms)}`,
+  ].join('\n');
+}
+
 export function buildJudgePrompt(input: JudgeInput): string {
   const { grant, profile, hardReasons } = input;
 
@@ -95,7 +137,7 @@ export function buildJudgePrompt(input: JudgeInput): string {
 - 개업일: ${profile.foundedAt ?? '해당 없음'}
 - 종업원 수: ${profile.employees ?? '미등록'}
 - 보유 인증: ${profile.certifications.length ? profile.certifications.join(', ') : '없음'}
-
+${profileExtras(profile)}
 ## 공고
 제목: ${grant.title}
 기관: ${grant.agency}

@@ -3,9 +3,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
-  INDUSTRIES, NO_CERTIFICATION, districtsOf, isBusinessNumber,
+  EXPORT_STATUSES, EXPORT_STATUS_LABELS, FOUNDER_TRAITS, FOUNDER_TRAIT_LABELS,
+  INDUSTRIES, NO_CERTIFICATION, NO_FOUNDER_TRAIT, NO_PAST_PROGRAM, PAST_PROGRAMS,
+  districtsOf, isBusinessNumber, suggestSmallBusiness,
 } from '@moai/shared';
-import type { Interest } from '@moai/shared';
+import type { ExportStatus, Interest, UnlockHint } from '@moai/shared';
 import {
   APPLICANT_TYPE_LABELS as STAGE_LABELS, INDUSTRY_LABELS,
 } from '@moai/shared';
@@ -25,8 +27,16 @@ const REGIONS = [
 
 const CERTIFICATIONS = [
   '벤처기업확인', '이노비즈', '메인비즈', '여성기업', '장애인기업',
-  '사회적기업', '연구개발전담부서', 'ISO', '기업부설연구소',
+  '사회적기업', '예비사회적기업', '협동조합', '마을기업', '소셜벤처',
+  '연구개발전담부서', 'ISO', '기업부설연구소',
 ];
+
+/** 예/아니오 칩 — 한 번 눌러 답하게 한다. 입력칸보다 훨씬 덜 지친다. */
+const YES_NO = [
+  { value: 'yes', label: '예' },
+  { value: 'no', label: '아니오' },
+] as const;
+const toYesNo = (v: boolean | null) => (v == null ? null : v ? 'yes' : 'no');
 
 interface FormState {
   name: string;
@@ -40,6 +50,11 @@ interface FormState {
   employees: string;
   annualRevenue: string;
   certifications: string[];
+  founderTraits: string[];
+  isSmallBusiness: boolean | null;
+  exportStatus: ExportStatus | null;
+  hasIp: boolean | null;
+  pastPrograms: string[];
   interests: Interest[];
   procurementIndustries: string[];
   procurementRegistered: boolean | null;
@@ -58,6 +73,11 @@ const EMPTY: FormState = {
   employees: '',
   annualRevenue: '',
   certifications: [],
+  founderTraits: [],
+  isSmallBusiness: null,
+  exportStatus: null,
+  hasIp: null,
+  pastPrograms: [],
   interests: [],
   procurementIndustries: [],
   procurementRegistered: null,
@@ -70,6 +90,8 @@ export default function ProfilePage() {
   const params = useSearchParams();
   const welcome = params.get('welcome') === '1';
   const fromStage = params.get('from') === 'stage';
+  /** 대시보드의 "이것만 답하면"에서 왔으면 그 칸으로 데려간다 */
+  const focus = params.get('focus');
 
   const [form, setForm] = useState<FormState>(EMPTY);
   const [existing, setExisting] = useState<CompanyProfile | null>(null);
@@ -77,11 +99,16 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [hints, setHints] = useState<UnlockHint[]>([]);
 
   const load = useCallback(async () => {
     if (!session) return;
     try {
-      const p = await calendarApi.defaultProfile(session.tenantId).catch(() => null);
+      const [p, unlock] = await Promise.all([
+        calendarApi.defaultProfile(session.tenantId).catch(() => null),
+        calendarApi.unlockHints(session.tenantId).catch(() => [] as UnlockHint[]),
+      ]);
+      setHints(unlock);
       if (p) {
         setExisting(p);
         setForm({
@@ -97,6 +124,11 @@ export default function ProfilePage() {
           employees: p.employees != null ? String(p.employees) : '',
           annualRevenue: p.annualRevenue != null ? String(p.annualRevenue) : '',
           certifications: p.certifications ?? [],
+          founderTraits: p.founderTraits ?? [],
+          isSmallBusiness: p.isSmallBusiness ?? null,
+          exportStatus: p.exportStatus ?? null,
+          hasIp: p.hasIp ?? null,
+          pastPrograms: p.pastPrograms ?? [],
           interests: p.interests ?? [],
           procurementIndustries: p.procurementIndustries ?? [],
           procurementRegistered: p.procurementRegistered ?? null,
@@ -118,6 +150,26 @@ export default function ProfilePage() {
   useEffect(() => {
     void load();
   }, [load]);
+
+  /*
+   * 폼이 그려진 뒤에 그 칸으로 스크롤한다. 칸 전체를 잠깐 강조해
+   * 긴 폼에서 어디를 보라는 건지 헤매지 않게 한다.
+   */
+  useEffect(() => {
+    if (loading || !focus) return;
+    const el = document.getElementById(`field-${focus}`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('ring-2', 'ring-brand', 'rounded-xl');
+    const t = setTimeout(() => el.classList.remove('ring-2', 'ring-brand'), 2500);
+    return () => clearTimeout(t);
+  }, [loading, focus]);
+
+  /** 칸 이름 → 그 칸이 풀어 줄 공고 수 (라벨 옆에 보여 준다) */
+  const unlockOf = useMemo(
+    () => new Map(hints.map((h) => [h.field, h.resolves])),
+    [hints],
+  );
 
   /** 사업자가 없으면 사업자 관련 항목을 묻지 않는다. */
   const isPreliminary = form.stage === 'preliminary';
@@ -143,6 +195,8 @@ export default function ProfilePage() {
       form.industry !== null,
       form.region !== '',
       form.founderBirthYear !== '',
+      form.founderTraits.length > 0,
+      form.pastPrograms.length > 0,
     ];
     const business = isPreliminary
       ? []
@@ -150,6 +204,9 @@ export default function ProfilePage() {
           form.foundedAt !== '',
           form.employees !== '',
           form.annualRevenue !== '',
+          form.isSmallBusiness !== null,
+          form.exportStatus !== null,
+          form.hasIp !== null,
           form.certifications.length > 0,
         ];
     /*
@@ -177,19 +234,33 @@ export default function ProfilePage() {
    * 하는 셈이 되기 때문이다. 그래서 그것을 고르면 나머지를 지우고,
    * 다른 것을 고르면 "해당 없음"이 빠진다.
    */
-  function toggleCert(cert: string) {
-    const has = form.certifications.includes(cert);
+  function toggleExclusive(
+    key: 'certifications' | 'founderTraits' | 'pastPrograms',
+    value: string,
+    none: string,
+  ) {
+    const list = form[key];
+    const has = list.includes(value);
 
-    if (cert === NO_CERTIFICATION) {
-      set('certifications', has ? [] : [NO_CERTIFICATION]);
+    if (value === none) {
+      set(key, has ? [] : [none]);
       return;
     }
 
-    const rest = form.certifications.filter(
-      (c) => c !== NO_CERTIFICATION && c !== cert,
-    );
-    set('certifications', has ? rest : [...rest, cert]);
+    const rest = list.filter((c) => c !== none && c !== value);
+    set(key, has ? rest : [...rest, value]);
   }
+
+  /**
+   * 종업원 수·업종으로 본 소상공인 추천.
+   *
+   * **골라 주지 않고 권하기만 한다.** 매출 기준을 안 봤기 때문이다.
+   * 이미 답했거나 종업원 수를 모르면 띄우지 않는다.
+   */
+  const smallBusinessHint = useMemo(() => {
+    if (form.isSmallBusiness !== null || form.employees === '') return null;
+    return suggestSmallBusiness(Number(form.employees), form.industry);
+  }, [form.isSmallBusiness, form.employees, form.industry]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -215,6 +286,8 @@ export default function ProfilePage() {
       tenantId: session.tenantId,
       name: form.name.trim(),
       certifications: form.certifications,
+      founderTraits: form.founderTraits,
+      pastPrograms: form.pastPrograms,
       interests: form.interests,
       isDefault: true,
       ...(form.stage && { stage: form.stage }),
@@ -238,6 +311,9 @@ export default function ProfilePage() {
       if (form.employees) body.employees = Number(form.employees);
       if (form.annualRevenue) body.annualRevenue = Number(form.annualRevenue);
       body.isCorporation = form.stage === 'corporate';
+      body.isSmallBusiness = form.isSmallBusiness;
+      body.exportStatus = form.exportStatus;
+      body.hasIp = form.hasIp;
     }
 
     /*
@@ -300,7 +376,9 @@ export default function ProfilePage() {
             <p className="mt-1 text-sm text-grey-500">
               {progress.done === progress.total
                 ? '모두 채웠어요. 가장 정확하게 판정해 드립니다.'
-                : '비워두면 해당 공고는 “조건부”로 표시돼요.'}
+                : hints[0]?.resolves
+                  ? `${hints[0].label}만 답해도 ${hints[0].resolves}건이 바로 판정돼요.`
+                  : '비워두면 해당 공고는 “조건부”로 표시돼요.'}
             </p>
           </div>
           <div className="h-2 w-28 shrink-0 overflow-hidden rounded-full bg-grey-100">
@@ -330,7 +408,7 @@ export default function ProfilePage() {
             onPerformance={(v) => set('procurementPerformance', v)}
           />
 
-          <div className="border-t border-grey-100" />
+          <Section title="기본 정보" hint="형태·업종·지역으로 신청할 수 있는 사업이 크게 갈립니다" />
 
           <div>
             <Label required hint="사업자가 있으면 상호, 없으면 편한 이름으로">
@@ -344,7 +422,7 @@ export default function ProfilePage() {
             />
           </div>
 
-          <div>
+          <div id="field-stage" className="scroll-mt-24 transition-shadow">
             <Label required hint="형태에 따라 신청할 수 있는 사업이 달라집니다">
               사업자 형태
             </Label>
@@ -382,8 +460,8 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <div>
-            <Label hint="공고의 업종 요건과 대조합니다">관심 업종</Label>
+          <div id="field-industry" className="scroll-mt-24 transition-shadow">
+            <Label hint="공고의 업종 요건과 대조합니다">관심 업종<UnlockBadge n={unlockOf.get('industry')} /></Label>
             <ChipGroup
               options={INDUSTRIES.map((i) => ({
                 value: i,
@@ -394,7 +472,7 @@ export default function ProfilePage() {
             />
           </div>
 
-          <div>
+          <div id="field-region" className="scroll-mt-24 transition-shadow">
             <Label hint={isPreliminary ? '거주지 기준입니다' : '사업장 소재지 기준입니다'}>
               지역
             </Label>
@@ -450,9 +528,20 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          <div>
+          {/*
+            **묻는 순서 = 떠올리는 순서.**
+
+            항목이 늘어난 만큼 지치지 않게 흐름을 나눴다 — 사람(대표자) →
+            사업체 → 지나온 이력. 앞에서 답한 것이 뒤에서 물을 것을 줄인다
+            (예비창업자면 사업체 칸을 통째로 건너뛰고, 종업원 수를 넣으면
+            소상공인 여부를 권해 준다). 입력칸 대신 칩을 쓴 것도 같은 이유다.
+          */}
+          <Section title="대표자" hint="청년·여성·재창업 전용 공고를 가려냅니다" />
+
+          <div id="field-founderBirthYear" className="scroll-mt-24 transition-shadow">
             <Label hint="청년 대상 공고(만 39세 이하 등) 판정에 씁니다">
               대표자 출생연도
+              <UnlockBadge n={unlockOf.get('founderBirthYear')} />
             </Label>
             <Input
               type="number"
@@ -472,11 +561,26 @@ export default function ProfilePage() {
             )}
           </div>
 
+          <div id="field-founderTraits" className="scroll-mt-24 transition-shadow">
+            <Label hint="해당하는 것을 모두 고르세요. 없으면 “해당 없음”">
+              대표자 특성
+              <UnlockBadge n={unlockOf.get('founderTraits')} />
+            </Label>
+            <MultiChips
+              options={[
+                ...FOUNDER_TRAITS.map((t) => ({ value: t as string, label: FOUNDER_TRAIT_LABELS[t] })),
+                { value: NO_FOUNDER_TRAIT, label: '해당 없음' },
+              ]}
+              selected={form.founderTraits}
+              onToggle={(v) => toggleExclusive('founderTraits', v, NO_FOUNDER_TRAIT)}
+            />
+          </div>
+
           {/* 사업자가 없으면 아래 항목은 묻지 않는다 */}
           {isPreliminary ? (
             <div className="rounded-xl bg-brand-light p-4">
               <p className="text-sm font-semibold text-grey-800">
-                사업자등록 전이라 여기까지면 충분해요
+                사업자등록 전이라 사업체 정보는 건너뛸게요
               </p>
               <p className="mt-1 text-sm text-grey-600">
                 창업일·매출액·인증은 사업자등록 후에 입력하시면 됩니다.
@@ -485,9 +589,12 @@ export default function ProfilePage() {
             </div>
           ) : (
             <>
-              <div>
+              <Section title="사업체" hint="규모·소상공인·수출 요건을 판정합니다" />
+
+              <div id="field-foundedAt" className="scroll-mt-24 transition-shadow">
                 <Label hint="사업자등록증상 개업일 — 업력 계산에 씁니다">
                   개업일
+                  <UnlockBadge n={unlockOf.get('foundedAt')} />
                 </Label>
                 <Input
                   type="date"
@@ -497,8 +604,8 @@ export default function ProfilePage() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label hint="대표 포함">종업원 수</Label>
+                <div id="field-employees" className="scroll-mt-24 transition-shadow">
+                  <Label hint="대표 포함">종업원 수<UnlockBadge n={unlockOf.get('employees')} /></Label>
                   <Input
                     type="number"
                     min={0}
@@ -507,8 +614,8 @@ export default function ProfilePage() {
                     placeholder="5"
                   />
                 </div>
-                <div>
-                  <Label hint="최근 연도 기준, 원 단위">연 매출액</Label>
+                <div id="field-annualRevenue" className="scroll-mt-24 transition-shadow">
+                  <Label hint="최근 연도 기준, 원 단위">연 매출액<UnlockBadge n={unlockOf.get('annualRevenue')} /></Label>
                   <Input
                     type="number"
                     min={0}
@@ -520,31 +627,74 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div>
-                <Label hint="보유한 인증을 모두 선택하세요">보유 인증</Label>
-                <div className="flex flex-wrap gap-2">
-                  {[...CERTIFICATIONS, NO_CERTIFICATION].map((c) => {
-                    const on = form.certifications.includes(c);
-                    return (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => toggleCert(c)}
-                        className={`h-10 rounded-full px-4 text-sm font-medium transition-colors ${
-                          on
-                            ? 'bg-brand text-white'
-                            : 'bg-grey-100 text-grey-600 hover:bg-grey-200'
-                        }`}
-                      >
-                        {c}
-                      </button>
-                    );
-                  })}
+              {/* 종업원 수 바로 밑 — 방금 넣은 숫자로 답이 거의 정해진다 */}
+              <div id="field-isSmallBusiness" className="scroll-mt-24 transition-shadow">
+                <Label hint="소상공인 전용 공고가 많아요 (제조·건설 10명 미만, 그 외 5명 미만)">
+                  소상공인인가요?
+                  <UnlockBadge n={unlockOf.get('isSmallBusiness')} />
+                </Label>
+                <ChipGroup
+                  options={[...YES_NO]}
+                  value={toYesNo(form.isSmallBusiness)}
+                  onChange={(v) => set('isSmallBusiness', v === 'yes')}
+                />
+                {smallBusinessHint !== null && (
+                  <button
+                    type="button"
+                    onClick={() => set('isSmallBusiness', smallBusinessHint)}
+                    className="mt-2 text-xs font-medium text-brand hover:underline"
+                  >
+                    종업원 {form.employees}명 기준으로는 소상공인{smallBusinessHint ? '이에요' : '이 아니에요'} — 그대로 선택
+                  </button>
+                )}
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div id="field-exportStatus" className="scroll-mt-24 transition-shadow">
+                  <Label hint="수출기업 전용 공고 판정">수출<UnlockBadge n={unlockOf.get('exportStatus')} /></Label>
+                  <ChipGroup
+                    options={EXPORT_STATUSES.map((e) => ({ value: e, label: EXPORT_STATUS_LABELS[e] }))}
+                    value={form.exportStatus}
+                    onChange={(v) => set('exportStatus', v)}
+                  />
+                </div>
+                <div id="field-hasIp" className="scroll-mt-24 transition-shadow">
+                  <Label hint="특허·실용신안·디자인권">지식재산 보유<UnlockBadge n={unlockOf.get('hasIp')} /></Label>
+                  <ChipGroup
+                    options={[...YES_NO]}
+                    value={toYesNo(form.hasIp)}
+                    onChange={(v) => set('hasIp', v === 'yes')}
+                  />
                 </div>
               </div>
 
+              <div id="field-certifications" className="scroll-mt-24 transition-shadow">
+                <Label hint="보유한 인증을 모두 선택하세요">보유 인증<UnlockBadge n={unlockOf.get('certifications')} /></Label>
+                <MultiChips
+                  options={[...CERTIFICATIONS, NO_CERTIFICATION].map((c) => ({ value: c, label: c }))}
+                  selected={form.certifications}
+                  onToggle={(v) => toggleExclusive('certifications', v, NO_CERTIFICATION)}
+                />
+              </div>
             </>
           )}
+
+          <Section title="지원 이력" hint="“OO패키지 선정기업 대상”, “기수혜자 제외” 조건을 자동으로 답합니다" />
+
+          <div id="field-pastPrograms" className="scroll-mt-24 transition-shadow">
+            <Label hint="관심 공고에서 “선정”으로 표시하면 자동으로 추가돼요">
+              선정된 적 있는 사업
+              <UnlockBadge n={unlockOf.get('pastPrograms')} />
+            </Label>
+            <MultiChips
+              options={[
+                ...PAST_PROGRAMS.map((p) => ({ value: p.value as string, label: p.value })),
+                { value: NO_PAST_PROGRAM, label: '없음' },
+              ]}
+              selected={form.pastPrograms}
+              onToggle={(v) => toggleExclusive('pastPrograms', v, NO_PAST_PROGRAM)}
+            />
+          </div>
 
           <FieldError>{error}</FieldError>
 
@@ -574,5 +724,59 @@ export default function ProfilePage() {
         </Card>
       </form>
     </main>
+  );
+}
+
+/** 입력 흐름의 마디 — 지금 무엇에 대해 답하는지 알려 준다 */
+function Section({ title, hint }: { title: string; hint: string }) {
+  return (
+    <div className="border-t border-grey-100 pt-6">
+      <h2 className="text-base font-bold text-grey-900">{title}</h2>
+      <p className="mt-0.5 text-sm text-grey-500">{hint}</p>
+    </div>
+  );
+}
+
+/**
+ * 여러 개 고르는 칩.
+ * "해당 없음" 같은 배타 값의 처리는 부르는 쪽(`toggleExclusive`)이 한다.
+ */
+function MultiChips({
+  options, selected, onToggle,
+}: {
+  options: { value: string; label: string }[];
+  selected: string[];
+  onToggle: (value: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      {options.map((o) => {
+        const on = selected.includes(o.value);
+        return (
+          <button
+            key={o.value}
+            type="button"
+            onClick={() => onToggle(o.value)}
+            className={`h-10 rounded-full px-4 text-sm font-medium transition-colors ${
+              on
+                ? 'bg-brand text-white'
+                : 'bg-grey-100 text-grey-600 hover:bg-grey-200'
+            }`}
+          >
+            {o.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+/** 이 칸을 채우면 바로 판정되는 공고 수 — 0 이면 띄우지 않는다 */
+function UnlockBadge({ n }: { n?: number }) {
+  if (!n) return null;
+  return (
+    <span className="tabular ml-2 rounded-full bg-brand-light px-2 py-0.5 text-xs font-semibold text-brand">
+      {n}건 판정
+    </span>
   );
 }

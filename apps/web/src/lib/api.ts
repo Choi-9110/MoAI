@@ -2,7 +2,7 @@ import type {
   CalendarItem, CalendarMonth, CompanyProfile, ConditionAnswer, ConfidenceLevel,
   BriefItem, GrantCategory, GrantOutcome, GrantStage, ModooAnswers, PlanDoc, PlanFormat, PlanProgress, PosterDoc,
   ProgressEvent, ProjectTrack, QuestionType, SectionKey, SlotChange, SlotNote,
-  TemplateKind, BidNotice, BidBrief, BidAnswer,
+  TemplateKind, BidNotice, BidBrief, BidAnswer, UnlockHint,
 } from '@moai/shared';
 
 /**
@@ -451,6 +451,10 @@ export const calendarApi = {
     if (tenantId) qs.set('tenantId', tenantId);
     return request<CalendarItem[]>(`/grants/calendar/upcoming?${qs.toString()}`);
   },
+
+  /** 먼저 채우면 판정이 가장 많이 풀리는 내 정보 칸 */
+  unlockHints: (tenantId: string) =>
+    request<UnlockHint[]>(`/grants/eligibility/unlock?tenantId=${tenantId}`),
 
   /** 공고 1건 판정 상세 */
   eligibility: (grantId: string, tenantId?: string) => {

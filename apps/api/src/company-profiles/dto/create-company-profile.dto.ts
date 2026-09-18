@@ -1,8 +1,9 @@
 import {
-  APPLICANT_TYPES, INDUSTRIES, INTERESTS, PROCUREMENT_INDUSTRIES,
+  APPLICANT_TYPES, EXPORT_STATUSES, FOUNDER_TRAITS, INDUSTRIES, INTERESTS,
+  NO_FOUNDER_TRAIT, NO_PAST_PROGRAM, PAST_PROGRAMS, PROCUREMENT_INDUSTRIES,
   normalizeBusinessNumber,
 } from '@moai/shared';
-import type { ApplicantType, Industry } from '@moai/shared';
+import type { ApplicantType, ExportStatus, Industry } from '@moai/shared';
 import { Transform } from 'class-transformer';
 import {
   IsArray, IsBoolean, IsDateString, IsIn, IsInt, IsNumber,
@@ -90,6 +91,42 @@ export class CreateCompanyProfileDto {
   @IsArray()
   @IsString({ each: true })
   certifications?: string[];
+
+  /** 대표자 특성. `none` 은 해당 없음 — 다른 값과 함께 올 수 없다 */
+  @IsOptional()
+  @IsArray()
+  @IsIn([...FOUNDER_TRAITS, NO_FOUNDER_TRAIT], {
+    each: true,
+    message: '알 수 없는 대표자 특성입니다.',
+  })
+  @Transform(({ value }) =>
+    Array.isArray(value) && value.includes(NO_FOUNDER_TRAIT) ? [NO_FOUNDER_TRAIT] : value,
+  )
+  founderTraits?: string[];
+
+  @IsOptional()
+  @IsBoolean()
+  isSmallBusiness?: boolean | null;
+
+  @IsOptional()
+  @IsIn(EXPORT_STATUSES as unknown as string[])
+  exportStatus?: ExportStatus | null;
+
+  @IsOptional()
+  @IsBoolean()
+  hasIp?: boolean | null;
+
+  /** 선정 이력. 목록에 있는 사업만 받는다 — 자유 입력은 판정에서 못 맞춘다 */
+  @IsOptional()
+  @IsArray()
+  @IsIn([...PAST_PROGRAMS.map((p) => p.value), NO_PAST_PROGRAM], {
+    each: true,
+    message: '알 수 없는 사업입니다.',
+  })
+  @Transform(({ value }) =>
+    Array.isArray(value) && value.includes(NO_PAST_PROGRAM) ? [NO_PAST_PROGRAM] : value,
+  )
+  pastPrograms?: string[];
 
   /** 관심 분야 — 고른 것만 목록에 나온다 */
   @IsOptional()

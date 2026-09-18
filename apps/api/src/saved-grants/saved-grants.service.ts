@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { resolveGrantStatus } from '@moai/shared';
+import { NO_PAST_PROGRAM, programsIn, resolveGrantStatus } from '@moai/shared';
 import type { CalendarItem, GrantOutcome } from '@moai/shared';
 import { CalendarService } from '../grants/calendar.service';
 import { EligibilityService } from '../grants/eligibility.service';
@@ -86,7 +86,7 @@ export class SavedGrantsService {
      */
     const exists = await this.grants.findOne({
       where: { id: input.grantId },
-      select: { id: true },
+      select: { id: true, title: true },
     });
     if (!exists) throw new NotFoundException('공고를 찾을 수 없습니다.');
 
@@ -106,7 +106,38 @@ export class SavedGrantsService {
     // 지울 때는 시점도 같이 지운다 — 남겨 두면 "언제 무엇" 이 어긋난다
     row.outcomeAt = input.outcome ? new Date() : null;
 
-    return this.saved.save(row);
+    const saved = await this.saved.save(row);
+    if (input.outcome === 'won') {
+      await this.recordProgram(input.tenantId, exists.title);
+    }
+    return saved;
+  }
+
+  /**
+   * 선정된 공고가 아는 사업이면 내 정보의 선정 이력에 넣는다.
+   *
+   * 사용자가 "예비창업패키지에 선정됐다"를 두 번 적지 않게 하려는 것이다.
+   * **넣기만 하고 빼지는 않는다** — 결과를 지웠다고 선정 사실이 사라지는
+   * 건 아니고, 이력은 내 정보 화면에서 직접 고칠 수 있다.
+   */
+  private async recordProgram(tenantId: string, title: string): Promise<void> {
+    const named = programsIn(title);
+    if (named.length === 0) return;
+
+    const profile = await this.profiles.findOne({
+      where: { tenantId, isDefault: true },
+    });
+    if (!profile) return;
+
+    const current = (profile.pastPrograms ?? []).filter((v) => v !== NO_PAST_PROGRAM);
+    const next = [...new Set([...current, ...named])];
+    if (next.length === current.length && !profile.pastPrograms?.includes(NO_PAST_PROGRAM)) {
+      return;
+    }
+
+    // update() 로 칸 하나만 바꾸면 updated_at 이 안 움직여 판정 캐시가 갱신되지 않는다
+    profile.pastPrograms = next;
+    await this.profiles.save(profile);
   }
 
   /**
