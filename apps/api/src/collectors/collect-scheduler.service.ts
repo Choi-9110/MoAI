@@ -47,6 +47,25 @@ export class CollectSchedulerService {
     });
   }
 
+  /**
+   * 시간마다 판정 새로 고침.
+   *
+   * 공고문 읽기 워커가 공고의 자격 조건을 채우면 그 공고의 `updatedAt` 이
+   * 움직인다. 그런데 스윕은 **수집에 변화가 있을 때만** 돌아서, 공고문을
+   * 다 읽어 놓고도 판정은 어제 것 그대로인 상태가 생긴다.
+   *
+   * 스윕은 이미 최신인 조합을 건너뛰므로(`isFresh`) 바뀐 것이 없으면 거의
+   * 공짜다. 그래서 시간마다 한 번 돌려 둔다.
+   */
+  @Cron(CronExpression.EVERY_HOUR, { timeZone: 'Asia/Seoul' })
+  async refresh(): Promise<void> {
+    if (!this.enabled || this.running) return;
+    const swept = await this.cache.sweep({});
+    if (swept.scanned > 0) {
+      this.logger.log(`판정 새로 고침 — 다시 계산 ${swept.scanned} / 최신 ${swept.skippedFresh}`);
+    }
+  }
+
   /** 주간 전체 — 수정된 공고와 누락분을 맞춘다 */
   @Cron('0 3 * * 0', { timeZone: 'Asia/Seoul' })
   async weekly(): Promise<void> {
