@@ -41,6 +41,14 @@ function freeSlot(): void {
 }
 
 /** `claude -p --output-format json` 이 돌려주는 봉투 */
+/** 사용량 한도로 끝났음을 부르는 쪽에 알리는 표시 */
+export const USAGE_LIMIT_PREFIX = '[USAGE_LIMIT] 사용량 한도에 도달했습니다 —';
+
+/** 이 오류가 사용량 한도 때문인가 */
+export function isUsageLimitError(message: string): boolean {
+  return message.startsWith('[USAGE_LIMIT]');
+}
+
 export interface CliEnvelope {
   is_error?: boolean;
   subtype?: string;
@@ -264,6 +272,18 @@ export class ClaudeCliService {
   private describe(envelope: CliEnvelope, options: CliRunOptions): string {
     const turns = envelope.num_turns ?? 0;
     const max = options.maxTurns ?? 1;
+
+    /*
+     * **사용량 한도는 따로 알린다.**
+     *
+     * 요금제 사용량을 다 쓰면 CLI 가 오류로 끝나는데, 그걸 다른 실패와 같이
+     * 다루면 "문서가 깨졌다"로 기록되고 다시 시도할 기회까지 깎인다.
+     * 부르는 쪽이 구분할 수 있게 `USAGE_LIMIT` 을 문장 앞에 붙인다.
+     */
+    const body = `${envelope.result ?? ''} ${envelope.subtype ?? ''}`;
+    if (/usage limit|limit reached|rate.?limit|quota|사용량/i.test(body)) {
+      return `${USAGE_LIMIT_PREFIX} ${(envelope.result ?? '').slice(0, 200)}`.trim();
+    }
 
     if (envelope.stop_reason === 'tool_use' || turns >= max) {
       return options.readDir

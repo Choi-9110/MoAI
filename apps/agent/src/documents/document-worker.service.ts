@@ -5,7 +5,7 @@ import {
   buildDocumentPrompt, cleanDocumentText, hasReadableText, parseDocumentOutput,
 } from '@moai/shared';
 import type { GrantDocumentJob, GrantDocumentResult } from '@moai/shared';
-import { ClaudeCliService } from '../claude/claude-cli.service';
+import { ClaudeCliService, isUsageLimitError } from '../claude/claude-cli.service';
 import { extractHangulText } from '../common/hangul';
 import { extractPdfText } from '../common/pdf';
 
@@ -20,6 +20,8 @@ export interface DocumentDrainResult {
   extracted: number;
   noText: number;
   failed: number;
+  /** 사용량 한도로 멈췄는가 — 남은 공고는 손대지 않고 다음 차례로 넘긴다 */
+  stopped?: boolean;
 }
 
 /**
@@ -150,7 +152,23 @@ export class DocumentWorkerService implements OnModuleInit {
       await Promise.all(
         Array.from({ length: Math.min(concurrency, queue.length) }, async () => {
           for (let job = queue.shift(); job; job = queue.shift()) {
+            if (result.stopped) return;
             const out = await this.read(job);
+
+            /*
+             * 사용량을 다 썼으면 **아무것도 기록하지 않고 멈춘다.**
+             * 기록하면 실패 횟수만 깎여, 한도가 풀린 뒤에도 영영 안 읽는
+             * 공고가 생긴다. 남겨 두면 다음 차례에 그대로 다시 잡힌다.
+             */
+            if (out.status === 'failed' && out.error && isUsageLimitError(out.error)) {
+              result.stopped = true;
+              queue.length = 0;
+              this.logger.warn(
+                `사용량 한도로 멈춥니다 — 남은 ${jobs.length - result.extracted - result.noText - result.failed}건은 다음 차례에 다시 읽습니다. ${out.error.slice(0, 120)}`,
+              );
+              return;
+            }
+
             try {
               await this.report(job.grantId, out);
               if (out.status === 'extracted') result.extracted += 1;
@@ -165,7 +183,8 @@ export class DocumentWorkerService implements OnModuleInit {
       );
 
       this.logger.log(
-        `공고문 읽기 — 받음 ${result.fetched} / 추출 ${result.extracted} / 글 없음 ${result.noText} / 실패 ${result.failed}`,
+        `공고문 읽기 — 받음 ${result.fetched} / 추출 ${result.extracted} / 글 없음 ${result.noText} / 실패 ${result.failed}` +
+          (result.stopped ? ' (사용량 한도로 중단)' : ''),
       );
       return result;
     } catch (err) {
@@ -220,6 +239,13 @@ export class DocumentWorkerService implements OnModuleInit {
         prompt: buildDocumentPrompt({ title: job.title, text }),
         model: this.model,
         timeoutMs: parseInt(this.config.get<string>('DOCUMENT_TIMEOUT_MS', '240000'), 10),
+        /*
+         * 글은 이미 우리가 뽑아 프롬프트에 넣었다. 그런데 모델이 파일을
+         * 찾아 읽으려 들다 턴 한도에 걸려 죽는 일이 있었다(30건). 도구를
+         * 닫고 한 턴 더 준다.
+         */
+        allowedTools: [],
+        maxTurns: 2,
       });
       if (envelope.is_error) {
         throw new Error(`Claude CLI 오류: ${envelope.subtype ?? '알 수 없음'}`);
