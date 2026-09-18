@@ -61,11 +61,32 @@ export class DocumentWorkerService implements OnModuleInit {
     setInterval(() => void this.drain(), intervalMs);
     // 켜자마자 한 번 돈다 — 첫 주기를 기다리면 10분 동안 아무 일도 안 한다
     setTimeout(() => void this.drain(), 10_000);
-    this.logger.log(`공고문 읽기 워커 시작 — ${intervalMs / 1000}초 간격`);
+    this.logger.log(
+      `공고문 읽기 워커 시작 — ${intervalMs / 1000}초 간격, ` +
+        `${this.config.get<string>('DOCUMENT_ACTIVE_HOURS', '22-8')}시에만 읽음`,
+    );
   }
 
   get isRunning(): boolean {
     return this.running;
+  }
+
+  /**
+   * 지금이 읽어도 되는 시간인가.
+   *
+   * 로컬 Claude 는 **사용자가 쓰는 것과 같은 자원**이다. 낮에 수천 건을 읽고
+   * 있으면 정작 사업계획서 생성이 밀린다. 그래서 기본은 밤(22시~08시)이고,
+   * `DOCUMENT_ACTIVE_HOURS` 로 바꾼다. `0-24` 면 아무 때나 돈다.
+   */
+  private get inWindow(): boolean {
+    const raw = this.config.get<string>('DOCUMENT_ACTIVE_HOURS', '22-8').trim();
+    const m = raw.match(/^(\d{1,2})\s*-\s*(\d{1,2})$/);
+    if (!m) return true;
+
+    const [from, to] = [Number(m[1]), Number(m[2])];
+    const hour = new Date().getHours();
+    // 22-8 처럼 자정을 넘는 구간은 반대로 읽는다
+    return from <= to ? hour >= from && hour < to : hour >= from || hour < to;
   }
 
   private get apiBase(): string {
@@ -85,6 +106,14 @@ export class DocumentWorkerService implements OnModuleInit {
     const result: DocumentDrainResult = { fetched: 0, extracted: 0, noText: 0, failed: 0 };
     if (this.running) {
       this.logger.warn('이미 공고문을 읽는 중입니다.');
+      return result;
+    }
+
+    // 손으로 부른 것(limit 지정)은 시간대와 상관없이 돌린다
+    if (limit == null && !this.inWindow) {
+      this.logger.debug(
+        `읽기 시간대가 아닙니다 (${this.config.get<string>('DOCUMENT_ACTIVE_HOURS', '22-8')}시)`,
+      );
       return result;
     }
 
