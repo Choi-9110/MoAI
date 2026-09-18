@@ -81,6 +81,19 @@ export class DocumentWorkerService implements OnModuleInit {
    * `DOCUMENT_ACTIVE_HOURS` 로 바꾼다. `0-24` 면 아무 때나 돈다.
    */
   private get inWindow(): boolean {
+    /*
+     * **이 시각 전에는 시작하지 않는다.**
+     *
+     * 시간대만으로는 "오늘 밤부터"를 말할 수 없다. `22-16` 은 자정을 넘는
+     * 구간이라 지금이 오후 2시여도 구간 안이다 — 실제로 그렇게 설정했다가
+     * 재시작하자마자 낮에 돌기 시작했다. 한 번만 미루는 데 쓴다.
+     */
+    const notBefore = (this.config.get<string>('DOCUMENT_NOT_BEFORE') ?? '').trim();
+    if (notBefore) {
+      const at = new Date(notBefore).getTime();
+      if (!Number.isNaN(at) && Date.now() < at) return false;
+    }
+
     const raw = this.config.get<string>('DOCUMENT_ACTIVE_HOURS', '22-8').trim();
     const m = raw.match(/^(\d{1,2})\s*-\s*(\d{1,2})$/);
     if (!m) return true;
@@ -113,8 +126,10 @@ export class DocumentWorkerService implements OnModuleInit {
 
     // 손으로 부른 것(limit 지정)은 시간대와 상관없이 돌린다
     if (limit == null && !this.inWindow) {
+      const notBefore = (this.config.get<string>('DOCUMENT_NOT_BEFORE') ?? '').trim();
       this.logger.debug(
-        `읽기 시간대가 아닙니다 (${this.config.get<string>('DOCUMENT_ACTIVE_HOURS', '22-8')}시)`,
+        `읽기 시간대가 아닙니다 (${this.config.get<string>('DOCUMENT_ACTIVE_HOURS', '22-8')}시` +
+          (notBefore ? `, ${notBefore} 이후 시작` : '') + ')',
       );
       return result;
     }
